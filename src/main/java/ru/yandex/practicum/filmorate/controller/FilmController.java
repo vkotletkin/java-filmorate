@@ -38,9 +38,12 @@ public class FilmController {
             throw new ValidationException("Передаваемые данные не соответствую определенным критериям!");
         }
 
-        films.put(film.getId(), film);
-        return film;
-
+        if (films.containsKey(film.getId())) {
+            films.put(film.getId(), film);
+            return film;
+        } else {
+            throw new ValidationException("Передаваемые данные не соответствую определенным критериям!");
+        }
     }
 
     private boolean isNotPassedValidation(Film film) {
@@ -48,7 +51,7 @@ public class FilmController {
     }
 
     private boolean isCorrectFilmName(Film film) {
-        return film.getName() == null || film.getName().isBlank();
+        return film.getName() == null || !film.getName().isBlank();
     }
 
     private boolean isCorrectDescription(Film film) {
@@ -60,7 +63,7 @@ public class FilmController {
     }
 
     private boolean isCorrectDuration(Film film) {
-        return film.getDuration().isPositive();
+        return film.getDuration() > 0;
     }
 
     private long getNextId() {
