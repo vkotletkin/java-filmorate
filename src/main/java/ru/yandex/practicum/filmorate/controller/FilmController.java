@@ -35,11 +35,12 @@ public class FilmController {
     @PutMapping
     public Film update(@RequestBody Film film) {
         if (isNotPassedValidation(film)) {
-            throw new ValidationException("Название фильма не может быть пустым!");
+            throw new ValidationException("Передаваемые данные не соответствую определенным критериям!");
         }
 
         films.put(film.getId(), film);
         return film;
+
     }
 
     private boolean isNotPassedValidation(Film film) {
