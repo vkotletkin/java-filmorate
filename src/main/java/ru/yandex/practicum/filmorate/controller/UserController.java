@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -23,9 +24,9 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@RequestBody User user) {
-        if (isNotPassedValidation(user)) {
-            throw new ValidationException("Передаваемые данные не соответствую определенным критериям!");
+    public User create(@Valid @RequestBody User user) {
+        if (isDateOfBirthNotCorrect(user)) {
+            throw new ValidationException("Дата рождения не должна быть в будущем");
         }
 
         log.info("Проверка создаваемого пользователя с логином: {} на пустое имя", user.getLogin());
@@ -42,9 +43,9 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@RequestBody User user) {
-        if (isNotPassedValidation(user)) {
-            throw new ValidationException("Передаваемые данные не соответствую определенным критериям!");
+    public User update(@Valid @RequestBody User user) {
+        if (isDateOfBirthNotCorrect(user)) {
+            throw new ValidationException("Дата рождения не должна быть в будущем");
         }
 
         if (users.containsKey(user.getId())) {
@@ -56,20 +57,8 @@ public class UserController {
         }
     }
 
-    public boolean isNotPassedValidation(User user) {
-        return !(isEmailCorrected(user) && isLoginCorrected(user) && isDateOfBirthCorrect(user));
-    }
-
-    public boolean isEmailCorrected(User user) {
-        return !user.getEmail().isBlank() && user.getEmail() != null && user.getEmail().contains("@");
-    }
-
-    public boolean isLoginCorrected(User user) {
-        return !user.getLogin().isBlank() && user.getLogin() != null && !user.getLogin().contains(" ");
-    }
-
-    public boolean isDateOfBirthCorrect(User user) {
-        return user.getBirthday().isBefore(LocalDate.now());
+    public boolean isDateOfBirthNotCorrect(User user) {
+        return !user.getBirthday().isBefore(LocalDate.now());
     }
 
     public User fillEmptyNameWithLogin(User user) {
