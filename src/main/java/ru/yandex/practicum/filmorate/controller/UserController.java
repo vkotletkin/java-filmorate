@@ -53,7 +53,7 @@ public class UserController {
             log.info("Пользователь с идентификатором: {} успешно обновлен", user.getId());
             return user;
         } else {
-            throw new ValidationException("Передаваемые данные не соответствую определенным критериям!");
+            throw new ValidationException(String.format("Пользователя с идентификатором: %s не существует!", user.getId()));
         }
     }
 

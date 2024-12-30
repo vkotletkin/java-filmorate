@@ -26,8 +26,8 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        if (isNotPassedValidation(film)) {
-            throw new ValidationException("Передаваемые данные не соответствуют определенным критериям!");
+        if (isNotCorrectReleaseDate(film)) {
+            throw new ValidationException("Дата фильма не корректна!");
         }
 
         film.setId(getNextId());
@@ -41,8 +41,8 @@ public class FilmController {
 
     @PutMapping
     public Film update(@RequestBody Film film) {
-        if (isNotPassedValidation(film)) {
-            throw new ValidationException("Передаваемые данные не соответствуют определенным критериям!");
+        if (isNotCorrectReleaseDate(film)) {
+            throw new ValidationException("Дата фильма не корректна!");
         }
 
         if (films.containsKey(film.getId())) {
@@ -50,28 +50,12 @@ public class FilmController {
             log.info("Фильм с идентификатором: {} успешно обновлен", film.getId());
             return film;
         } else {
-            throw new ValidationException("Передаваемые данные не соответствую определенным критериям!");
+            throw new ValidationException(String.format("Фильма с идентификатором: %s не существует!", film.getId()));
         }
     }
 
-    private boolean isNotPassedValidation(Film film) {
-        return !(isCorrectFilmName(film) && isCorrectDescription(film) && isCorrectReleaseDate(film) && isCorrectDuration(film));
-    }
-
-    private boolean isCorrectFilmName(Film film) {
-        return film.getName() == null || !film.getName().isBlank();
-    }
-
-    private boolean isCorrectDescription(Film film) {
-        return film.getDescription().length() <= 200;
-    }
-
-    private boolean isCorrectReleaseDate(Film film) {
-        return film.getReleaseDate().isAfter(LocalDate.parse("1895-12-28"));
-    }
-
-    private boolean isCorrectDuration(Film film) {
-        return film.getDuration() > 0;
+    private boolean isNotCorrectReleaseDate(Film film) {
+        return !film.getReleaseDate().isAfter(LocalDate.parse("1895-12-28"));
     }
 
     private long getNextId() {
