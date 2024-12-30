@@ -1,18 +1,13 @@
 package ru.yandex.practicum.filmorate.model;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.yandex.practicum.filmorate.controller.UserController;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
-/**
- * Film.
- */
 @Data
 public class Film {
     private Long id;
@@ -23,6 +18,10 @@ public class Film {
     @NotBlank
     @Size(max = 200)
     private String description;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
+
+    @Min(1)
     private Long duration;
 }
