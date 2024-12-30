@@ -1,6 +1,9 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.yandex.practicum.filmorate.controller.UserController;
 
 import java.time.LocalDate;
 

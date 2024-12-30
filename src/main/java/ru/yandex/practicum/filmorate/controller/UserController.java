@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -11,12 +12,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
+@Slf4j
 public class UserController {
-
     Map<Long, User> users = new HashMap<>();
 
     @GetMapping
     public Collection<User> findAll() {
+        log.info("Запрошен возврат списка всех пользователей");
         return users.values();
     }
 
@@ -26,10 +28,14 @@ public class UserController {
             throw new ValidationException("Передаваемые данные не соответствую определенным критериям!");
         }
 
+        log.info("Проверка создаваемого пользователя с логином: {} на пустое имя", user.getLogin());
         user = fillEmptyNameWithLogin(user);
 
         user.setId(getNextId());
+        log.info("Для создаваемого пользователя установлен идентификатор: {}", user.getId());
+
         users.put(user.getId(), user);
+        log.info("Пользователь с идентификатором: {} успешно добавлен в хранилище", user.getId());
 
         return user;
 
@@ -43,6 +49,7 @@ public class UserController {
 
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
+            log.info("Пользователь с идентификатором: {} успешно обновлен", user.getId());
             return user;
         } else {
             throw new ValidationException("Передаваемые данные не соответствую определенным критериям!");

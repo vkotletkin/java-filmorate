@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -11,23 +12,28 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/films")
+@Slf4j
 public class FilmController {
 
     Map<Long, Film> films = new HashMap<>();
 
     @GetMapping
     public Collection<Film> findAll() {
+        log.info("Запрошен возврат списка всех фильмов");
         return films.values();
     }
 
     @PostMapping
     public Film create(@RequestBody Film film) {
         if (isNotPassedValidation(film)) {
-            throw new ValidationException("Название фильма не может быть пустым!");
+            throw new ValidationException("Передаваемые данные не соответствуют определенным критериям!");
         }
 
         film.setId(getNextId());
+        log.info("Для создаваемого фильма установлен идентификатор: {}", film.getId());
+
         films.put(film.getId(), film);
+        log.info("Фильм с идентификатором: {} успешно добавлен в хранилище", film.getId());
 
         return film;
     }
@@ -35,11 +41,12 @@ public class FilmController {
     @PutMapping
     public Film update(@RequestBody Film film) {
         if (isNotPassedValidation(film)) {
-            throw new ValidationException("Передаваемые данные не соответствую определенным критериям!");
+            throw new ValidationException("Передаваемые данные не соответствуют определенным критериям!");
         }
 
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
+            log.info("Фильм с идентификатором: {} успешно обновлен", film.getId());
             return film;
         } else {
             throw new ValidationException("Передаваемые данные не соответствую определенным критериям!");
