@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.model;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +26,7 @@ public class User {
 
     String name;
 
-    @Past
+    @PastOrPresent
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     LocalDate birthday;
 }
