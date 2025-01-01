@@ -34,7 +34,7 @@ public class FilmControllerTests {
     }
 
     @Test
-    public void testCreateFailLogin() {
+    public void testCreateFailName() {
         film = Film.builder()
                 .id(FilmDefinition.filmFifthElement.getId())
                 .description(FilmDefinition.filmFifthElement.getDescription())
