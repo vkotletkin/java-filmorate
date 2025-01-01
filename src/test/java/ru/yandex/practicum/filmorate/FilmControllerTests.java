@@ -34,7 +34,7 @@ public class FilmControllerTests {
     }
 
     @Test
-    public void testCreateFailName() {
+    public void testValidationName() {
         film = Film.builder()
                 .id(FilmDefinition.filmFifthElement.getId())
                 .description(FilmDefinition.filmFifthElement.getDescription())
@@ -48,7 +48,7 @@ public class FilmControllerTests {
     }
 
     @Test
-    public void testCreateFailDescription() {
+    public void testValidationDescription() {
         film = Film.builder()
                 .id(FilmDefinition.filmFifthElement.getId())
                 .name(FilmDefinition.filmFifthElement.getName())
@@ -62,7 +62,7 @@ public class FilmControllerTests {
     }
 
     @Test
-    public void testCreateFailReleaseDate() {
+    public void testValidationDate() {
         film = Film.builder()
                 .id(FilmDefinition.filmFifthElement.getId())
                 .name(FilmDefinition.filmFifthElement.getName())
@@ -77,7 +77,7 @@ public class FilmControllerTests {
     }
 
     @Test
-    public void testCreateFailDuration() {
+    public void testValidationDuration() {
         film = Film.builder()
                 .id(FilmDefinition.filmFifthElement.getId())
                 .name(FilmDefinition.filmFifthElement.getName())
