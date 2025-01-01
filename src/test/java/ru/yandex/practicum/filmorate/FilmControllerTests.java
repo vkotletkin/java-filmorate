@@ -32,5 +32,21 @@ public class FilmControllerTests {
         Assertions.assertEquals(0, violations.size());
     }
 
+    @Test
+    public void testCreateFailName() {
+        film = FilmDefinition.filmFifthElement;
+
+        film = Film.builder()
+                .id(FilmDefinition.filmFifthElement.getId())
+                .description(FilmDefinition.filmFifthElement.getDescription())
+                .releaseDate(FilmDefinition.filmFifthElement.getReleaseDate())
+                .duration(FilmDefinition.filmFifthElement.getDuration())
+                .build();
+
+        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+
+        Assertions.assertEquals(1, violations.size());
+    }
+
 
 }
