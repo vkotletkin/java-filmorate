@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,10 +25,6 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        if (isNotCorrectReleaseDate(film)) {
-            throw new ValidationException("Дата фильма не корректна!");
-        }
-
         film.setId(getNextId());
         log.info("Для создаваемого фильма установлен идентификатор: {}", film.getId());
 
@@ -41,29 +36,21 @@ public class FilmController {
 
     @PutMapping
     public Film update(@RequestBody Film film) {
-        if (isNotCorrectReleaseDate(film)) {
-            throw new ValidationException("Дата фильма не корректна!");
-        }
 
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
             log.info("Фильм с идентификатором: {} успешно обновлен", film.getId());
             return film;
         } else {
-            throw new ValidationException(String.format("Фильма с идентификатором: %s не существует!", film.getId()));
+            log.warn("Произошла ошибка добавления фильма. Полученного идентификатора {} не существует в хранилище!", film.getId());
+
+            throw new ValidationException(
+                    String.format("Произошла ошибка добавления фильма. Полученного идентификатора %s не существует в хранилище!", film.getId()));
         }
     }
 
-    private boolean isNotCorrectReleaseDate(Film film) {
-        return !film.getReleaseDate().isAfter(LocalDate.parse("1895-12-28"));
-    }
-
     private long getNextId() {
-        long currentMaxId = films.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
+        long currentMaxId = films.keySet().stream().mapToLong(id -> id).max().orElse(0);
         return ++currentMaxId;
     }
 }
