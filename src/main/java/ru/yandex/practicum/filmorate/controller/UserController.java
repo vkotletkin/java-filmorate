@@ -25,10 +25,6 @@ public class UserController {
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        if (isDateOfBirthNotCorrect(user)) {
-            throw new ValidationException("Дата рождения не должна быть в будущем");
-        }
-
         log.info("Проверка создаваемого пользователя с логином: {} на пустое имя", user.getLogin());
         user = fillEmptyNameWithLogin(user);
 
@@ -44,10 +40,6 @@ public class UserController {
 
     @PutMapping
     public User update(@Valid @RequestBody User user) {
-        if (isDateOfBirthNotCorrect(user)) {
-            throw new ValidationException("Дата рождения не должна быть в будущем");
-        }
-
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
             log.info("Пользователь с идентификатором: {} успешно обновлен", user.getId());
