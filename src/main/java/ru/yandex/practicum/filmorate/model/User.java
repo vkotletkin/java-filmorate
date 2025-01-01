@@ -16,9 +16,11 @@ import java.time.LocalDate;
 public class User {
     Long id;
 
-    @Email String email;
+    @Email
+    String email;
 
-    @NotBlank String login;
+    @NotBlank
+    String login;
 
     String name;
 
