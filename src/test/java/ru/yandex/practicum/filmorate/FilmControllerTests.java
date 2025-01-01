@@ -25,7 +25,7 @@ public class FilmControllerTests {
     }
 
     @Test
-    public void testShouldCreateFilmCorrect() {
+    public void testValidData() {
         film = FilmDefinition.filmFifthElement;
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
@@ -34,7 +34,7 @@ public class FilmControllerTests {
     }
 
     @Test
-    public void testValidationName() {
+    public void testValidName() {
         film = Film.builder()
                 .id(FilmDefinition.filmFifthElement.getId())
                 .description(FilmDefinition.filmFifthElement.getDescription())
@@ -48,7 +48,7 @@ public class FilmControllerTests {
     }
 
     @Test
-    public void testValidationDescription() {
+    public void testValidDescription() {
         film = Film.builder()
                 .id(FilmDefinition.filmFifthElement.getId())
                 .name(FilmDefinition.filmFifthElement.getName())
@@ -62,7 +62,7 @@ public class FilmControllerTests {
     }
 
     @Test
-    public void testValidationDate() {
+    public void testValidDate() {
         film = Film.builder()
                 .id(FilmDefinition.filmFifthElement.getId())
                 .name(FilmDefinition.filmFifthElement.getName())
@@ -77,7 +77,7 @@ public class FilmControllerTests {
     }
 
     @Test
-    public void testValidationDuration() {
+    public void testValidDuration() {
         film = Film.builder()
                 .id(FilmDefinition.filmFifthElement.getId())
                 .name(FilmDefinition.filmFifthElement.getName())

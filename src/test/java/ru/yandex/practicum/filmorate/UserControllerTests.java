@@ -25,7 +25,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void testValidationCorrect() {
+    public void testValidData() {
         user = UserDefinition.userLucBesson;
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
@@ -34,7 +34,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void testValidationLogin() {
+    public void testValidLogin() {
         user = User.builder()
                 .id(1L)
                 .email(UserDefinition.userLucBesson.getEmail())
@@ -48,7 +48,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void testValidationEmail() {
+    public void testValidEmail() {
         user = User.builder()
                 .id(1L)
                 .login(UserDefinition.userLucBesson.getLogin())
@@ -62,7 +62,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void testValidationBirthday() {
+    public void testValidBirthday() {
         user = User.builder()
                 .id(1L)
                 .login(UserDefinition.userLucBesson.getLogin())
