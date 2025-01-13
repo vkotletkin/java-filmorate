@@ -12,5 +12,5 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ValidationErrorResponse {
 
-    final List<ErrorResponse> violationList;
+    final List<ErrorResponse> validationErrorList;
 }
