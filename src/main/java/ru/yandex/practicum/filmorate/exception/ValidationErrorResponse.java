@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ViolationErrorResponse {
+public class ValidationErrorResponse {
 
-    final List<Violation> violationList;
+    final List<ErrorResponse> violationList;
 }
