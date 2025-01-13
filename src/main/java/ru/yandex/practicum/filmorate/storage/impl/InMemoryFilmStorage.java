@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 @Component
@@ -21,6 +22,8 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public Film createFilm(Film film) {
         film.setId(getNextId());
+        film.setLikedIds(new HashSet<>());
+
         log.info("Для создаваемого фильма установлен идентификатор: {}", film.getId());
 
         films.put(film.getId(), film);

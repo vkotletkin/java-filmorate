@@ -8,6 +8,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @Slf4j
@@ -34,5 +36,17 @@ public class UserController {
     public User update(@Valid @RequestBody User user) {
         log.info("Выполняется обновление пользователя.");
         return userService.updateUser(user);
+    }
+
+    // TODO: delete crud
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public User createFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        return userService.createFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public Set<Long> userFriends(@PathVariable Long id) {
+        return userService.getUserFriends(id);
     }
 }

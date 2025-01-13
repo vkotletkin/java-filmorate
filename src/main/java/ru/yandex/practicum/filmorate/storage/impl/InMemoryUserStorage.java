@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 @Component
@@ -25,6 +26,10 @@ public class InMemoryUserStorage implements UserStorage {
         User newUser = fillEmptyNameWithLogin(user);
 
         newUser.setId(getNextId());
+        if (user.getFriends() == null) {
+            newUser.setFriends(new HashSet<>());
+        }
+
         log.info("Для создаваемого пользователя установлен идентификатор: {}", user.getId());
 
         users.put(newUser.getId(), newUser);
@@ -42,6 +47,11 @@ public class InMemoryUserStorage implements UserStorage {
             throw new NotFoundException(String.format("Пользователя с идентификатором: %s не существует!",
                     user.getId()));
         }
+    }
+
+    public User deleteUser(User user) {
+        users.remove(user.getId());
+        return user;
     }
 
     private long getNextId() {

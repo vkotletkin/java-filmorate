@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -34,5 +35,12 @@ public class FilmController {
         log.info("Выполняется обновление фильма.");
         return filmService.updateFilm(film);
     }
+
+
+    // TODO: Delete crud
+//    @GetMapping("/popular")
+//    public List<Film> findPopularFilms(@RequestParam(defaultValue = "10") Long count) {
+//        return filmService.topPopularFilms(count);
+//    }
 
 }
