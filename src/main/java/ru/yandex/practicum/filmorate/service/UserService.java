@@ -24,4 +24,8 @@ public class UserService {
     public User updateUser(User user) {
         return userStorage.updateUser(user);
     }
+
+    public User deleteUser(User user) {
+        return userStorage.deleteUser(user);
+    }
 }

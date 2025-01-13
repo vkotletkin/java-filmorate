@@ -24,4 +24,8 @@ public class FilmService {
     public Film updateFilm(Film film) {
         return filmStorage.updateFilm(film);
     }
+
+    public Film deleteFilm(Film film) {
+        return filmStorage.deleteFilm(film);
+    }
 }

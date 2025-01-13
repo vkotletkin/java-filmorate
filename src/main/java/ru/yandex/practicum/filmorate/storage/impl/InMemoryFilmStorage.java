@@ -44,6 +44,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
     }
 
+    public Film deleteFilm(Film film) {
+        films.remove(film.getId());
+        return film;
+    }
+
     private long getNextId() {
         long currentMaxId = films.keySet().stream().mapToLong(id -> id).max().orElse(0);
         return ++currentMaxId;
