@@ -31,5 +31,5 @@ public class User {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     LocalDate birthday;
 
-    Set<User> friends;
+    Set<Long> friendsIds;
 }

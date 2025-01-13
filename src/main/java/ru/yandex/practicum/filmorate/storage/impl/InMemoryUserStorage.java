@@ -6,10 +6,8 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -26,8 +24,9 @@ public class InMemoryUserStorage implements UserStorage {
         User newUser = fillEmptyNameWithLogin(user);
 
         newUser.setId(getNextId());
-        if (user.getFriends() == null) {
-            newUser.setFriends(new HashSet<>());
+
+        if (user.getFriendsIds() == null) {
+            newUser.setFriendsIds(new HashSet<>());
         }
 
         log.info("Для создаваемого пользователя установлен идентификатор: {}", user.getId());

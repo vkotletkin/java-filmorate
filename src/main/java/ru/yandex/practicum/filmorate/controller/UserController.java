@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -41,12 +40,22 @@ public class UserController {
     // TODO: delete crud
 
     @PutMapping("/{id}/friends/{friendId}")
-    public User createFriend(@PathVariable Long id, @PathVariable Long friendId) {
+    public Set<Long> createFriend(@PathVariable Long id, @PathVariable Long friendId) {
         return userService.createFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
-    public Set<Long> userFriends(@PathVariable Long id) {
+    public Set<User> userFriends(@PathVariable Long id) {
         return userService.getUserFriends(id);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public User deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        return userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public Set<User> getCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        return userService.getCommonFriends(id, otherId);
     }
 }
