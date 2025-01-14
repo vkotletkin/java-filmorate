@@ -2,14 +2,13 @@ package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -20,38 +19,25 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.values();
     }
 
-    public Film createFilm(Film film) {
+    public Film create(Film film) {
         film.setId(getNextId());
-        film.setLikedIds(new HashSet<>());
-
-        log.info("Для создаваемого фильма установлен идентификатор: {}", film.getId());
-
         films.put(film.getId(), film);
-        log.info("Фильм с идентификатором: {} успешно добавлен в хранилище", film.getId());
-
         return film;
     }
 
-    public Film updateFilm(Film film) {
-        if (films.containsKey(film.getId())) {
-            films.put(film.getId(), film);
-            log.info("Фильм с идентификатором: {} успешно обновлен", film.getId());
-            return film;
-        } else {
-            log.warn("Произошла ошибка добавления фильма. Полученного идентификатора {} не существует в хранилище!",
-                    film.getId());
-
-            throw new NotFoundException(
-                    String.format("Произошла ошибка добавления фильма. Полученного идентификатора %s не существует в хранилище!",
-                            film.getId()));
-        }
-    }
-
-    public Film deleteFilm(Film film) {
-        films.remove(film.getId());
+    public Film update(Film film) {
+        films.put(film.getId(), film);
         return film;
     }
 
+    public Map<String, String> deleteById(Long filmId) {
+        films.remove(filmId);
+        return Map.of("description", String.format("Фильм с идентификатором: %d успешно удален", filmId));
+    }
+
+    public Optional<Film> findById(Long id) {
+        return Optional.ofNullable(films.get(id));
+    }
 
     private long getNextId() {
         long currentMaxId = films.keySet().stream().mapToLong(id -> id).max().orElse(0);

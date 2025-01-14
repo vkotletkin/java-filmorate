@@ -8,7 +8,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -36,8 +36,12 @@ public class FilmController {
         return filmService.updateFilm(film);
     }
 
+    @DeleteMapping
+    public Map<String, String> delete(@RequestParam Film film) {
+        log.info("Выполняется удаление фильма по идентификатору");
+        return filmService.deleteFilmById(film);
+    }
 
-//    // TODO: Delete crud
 //    @GetMapping("/popular")
 //    public List<Film> findPopularFilms(@RequestParam(defaultValue = "10") Long count) {
 //        return filmService.topPopularFilms(count);

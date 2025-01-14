@@ -1,15 +1,17 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FilmService {
@@ -21,19 +23,21 @@ public class FilmService {
     }
 
     public Film createFilm(Film film) {
-        return filmStorage.createFilm(film);
+        film.setLikedIds(new HashSet<>());
+
+        return filmStorage.create(film);
     }
 
     public Film updateFilm(Film film) {
-        return filmStorage.updateFilm(film);
+        filmStorage.findById(film.getId()).orElseThrow(
+                () -> new NotFoundException(
+                        String.format("Произошла ошибка добавления фильма. Полученного идентификатора %s не существует в хранилище!",
+                                film.getId())));
+
+        return filmStorage.update(film);
     }
 
-    public Film deleteFilm(Film film) {
-        return filmStorage.deleteFilm(film);
+    public Map<String, String> deleteFilmById(Film film) {
+        return filmStorage.deleteById(film.getId());
     }
-
-//    public List<Film> topPopularFilms(Long count) {
-//        return filmStorage.getFilms().stream()
-//
-//    }
 }
