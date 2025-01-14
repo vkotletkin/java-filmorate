@@ -4,10 +4,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -37,7 +39,11 @@ public class UserController {
         return userService.updateUser(user);
     }
 
-    // TODO: delete crud
+    @DeleteMapping
+    public Map<String, String> delete(@RequestParam Long id) {
+        log.info("Выполняется удаление пользователя по идентификатору");
+        return userService.deleteUserById(id);
+    }
 
     @PutMapping("/{id}/friends/{friendId}")
     public Set<Long> createFriend(@PathVariable Long id, @PathVariable Long friendId) {

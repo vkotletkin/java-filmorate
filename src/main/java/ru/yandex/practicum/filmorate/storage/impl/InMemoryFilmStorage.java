@@ -17,25 +17,24 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.values();
     }
 
-    public Film create(Film film) {
+    public Film createFilm(Film film) {
         film.setId(getNextId());
         films.put(film.getId(), film);
 
         return film;
     }
 
-    public Film update(Film film) {
+    public Film updateFilm(Film film) {
         films.put(film.getId(), film);
-
         return film;
     }
 
-    public Map<String, String> deleteById(Long filmId) {
+    public Map<String, String> deleteFilmById(Long filmId) {
         films.remove(filmId);
         return Map.of("description", String.format("Фильм с идентификатором: %d успешно удален", filmId));
     }
 
-    public Optional<Film> findById(Long id) {
+    public Optional<Film> findFilmById(Long id) {
         return Optional.ofNullable(films.get(id));
     }
 

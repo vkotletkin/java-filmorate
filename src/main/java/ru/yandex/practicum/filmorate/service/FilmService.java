@@ -3,13 +3,14 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
+
+import static ru.yandex.practicum.filmorate.exception.NotFoundException.notFoundException;
 
 @Slf4j
 @Service
@@ -25,19 +26,17 @@ public class FilmService {
     public Film createFilm(Film film) {
         film.setLikedIds(new HashSet<>());
 
-        return filmStorage.create(film);
+        return filmStorage.createFilm(film);
     }
 
     public Film updateFilm(Film film) {
-        filmStorage.findById(film.getId()).orElseThrow(
-                () -> new NotFoundException(
-                        String.format("Произошла ошибка добавления фильма. Полученного идентификатора %s не существует в хранилище!",
-                                film.getId())));
+        filmStorage.findFilmById(film.getId())
+                .orElseThrow(notFoundException("Фильма с идентификатором: {0} - не существует.", film.getId()));
 
-        return filmStorage.update(film);
+        return filmStorage.updateFilm(film);
     }
 
-    public Map<String, String> deleteFilmById(Film film) {
-        return filmStorage.deleteById(film.getId());
+    public Map<String, String> deleteFilmById(Long id) {
+        return filmStorage.deleteFilmById(id);
     }
 }

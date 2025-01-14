@@ -28,6 +28,7 @@ public class ValidationHandler {
                 .toList();
 
         log.error(e.getMessage());
+
         return new ValidationErrorResponse(errorResponses);
     }
 
@@ -40,6 +41,7 @@ public class ValidationHandler {
                 .toList();
 
         log.error(e.getMessage());
+
         return new ValidationErrorResponse(errorResponses);
     }
 }

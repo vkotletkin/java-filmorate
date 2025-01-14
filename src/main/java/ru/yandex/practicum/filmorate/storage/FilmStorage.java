@@ -10,11 +10,11 @@ public interface FilmStorage {
 
     Collection<Film> getFilms();
 
-    Film create(Film film);
+    Film createFilm(Film film);
 
-    Film update(Film film);
+    Film updateFilm(Film film);
 
-    Map<String, String> deleteById(Long id);
+    Map<String, String> deleteFilmById(Long id);
 
-    Optional<Film> findById(Long id);
+    Optional<Film> findFilmById(Long id);
 }

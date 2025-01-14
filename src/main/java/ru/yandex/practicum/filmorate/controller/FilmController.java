@@ -37,9 +37,9 @@ public class FilmController {
     }
 
     @DeleteMapping
-    public Map<String, String> delete(@RequestParam Film film) {
+    public Map<String, String> delete(@RequestParam Long id) {
         log.info("Выполняется удаление фильма по идентификатору");
-        return filmService.deleteFilmById(film);
+        return filmService.deleteFilmById(id);
     }
 
 //    @GetMapping("/popular")
