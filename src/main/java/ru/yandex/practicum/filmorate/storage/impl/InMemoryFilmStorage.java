@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.impl;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -11,7 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 
 @Component
-@Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> films = new HashMap<>();
 
@@ -22,11 +20,13 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film create(Film film) {
         film.setId(getNextId());
         films.put(film.getId(), film);
+
         return film;
     }
 
     public Film update(Film film) {
         films.put(film.getId(), film);
+
         return film;
     }
 

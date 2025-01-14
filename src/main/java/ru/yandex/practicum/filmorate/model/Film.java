@@ -11,7 +11,6 @@ import lombok.experimental.FieldDefaults;
 import ru.yandex.practicum.filmorate.annotation.FilmCreationConstraint;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -35,5 +34,5 @@ public class Film {
     @Min(1)
     Long duration;
 
-    Set<User> likedIds;
+    Set<Long> likedIds;
 }
