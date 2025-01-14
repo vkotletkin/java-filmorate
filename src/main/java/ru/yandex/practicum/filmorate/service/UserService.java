@@ -31,6 +31,9 @@ public class UserService {
     }
 
     public User updateUser(User user) {
+        userStorage.findUserById(user.getId())
+                .orElseThrow(notFoundException("Фильма с идентификатором: {0} - не существует.", user.getId()));
+
         return userStorage.updateUser(user);
     }
 
@@ -38,7 +41,7 @@ public class UserService {
         return userStorage.deleteUserById(id);
     }
 
-    public Set<Long> createFriend(Long id, Long friendId) {
+    public User createFriend(Long id, Long friendId) {
         User user = userStorage.findUserById(id)
                 .orElseThrow(notFoundException("Пользователя с идентификатором: {0} - не существует.", id));
 
@@ -48,7 +51,7 @@ public class UserService {
         user.getFriendsIds().add(friendId);
         friendUser.getFriendsIds().add(id);
 
-        return user.getFriendsIds();
+        return user;
     }
 
     public Set<User> getUserFriends(Long id) {
@@ -60,7 +63,7 @@ public class UserService {
                 .collect(Collectors.toSet());
     }
 
-    public User deleteFriend(Long id, Long friendId) {
+    public Map<String, String> deleteFriend(Long id, Long friendId) {
         User user = userStorage.findUserById(id)
                 .orElseThrow(notFoundException("Пользователя с идентификатором: {0} - не существует.", id));
 
@@ -70,7 +73,8 @@ public class UserService {
         user.getFriendsIds().remove(friendId);
         friendUser.getFriendsIds().remove(id);
 
-        return user;
+        return Map.of("description",
+                String.format("Пользователи с идентификаторами: %d и %d больше не друзья!", id, friendId));
     }
 
     public Set<User> getCommonFriends(Long id, Long otherId) {

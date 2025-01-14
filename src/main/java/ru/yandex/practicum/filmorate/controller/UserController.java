@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -45,23 +44,26 @@ public class UserController {
         return userService.deleteUserById(id);
     }
 
-    @PutMapping("/{id}/friends/{friendId}")
-    public Set<Long> createFriend(@PathVariable Long id, @PathVariable Long friendId) {
+    @PutMapping("/{id}/friends/{friend-id}")
+    public User createFriend(@PathVariable(name = "id") Long id,
+                                            @PathVariable(name = "friend-id") Long friendId) {
         return userService.createFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
-    public Set<User> userFriends(@PathVariable Long id) {
+    public Set<User> userFriends(@PathVariable(name = "id") Long id) {
         return userService.getUserFriends(id);
     }
 
-    @DeleteMapping("/{id}/friends/{friendId}")
-    public User deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
+    @DeleteMapping("/{id}/friends/{friend-id}")
+    public Map<String, String> deleteFriend(@PathVariable(name = "id") Long id,
+                                            @PathVariable(name = "friend-id") Long friendId) {
         return userService.deleteFriend(id, friendId);
     }
 
-    @GetMapping("/{id}/friends/common/{otherId}")
-    public Set<User> getCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
+    @GetMapping("/{id}/friends/common/{other-id}")
+    public Set<User> getCommonFriends(@PathVariable(name = "id") Long id,
+                                      @PathVariable("other-id") Long otherId) {
         return userService.getCommonFriends(id, otherId);
     }
 }
