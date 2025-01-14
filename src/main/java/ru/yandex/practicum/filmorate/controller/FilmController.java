@@ -43,17 +43,21 @@ public class FilmController {
         return filmService.deleteFilmById(id);
     }
 
-//    @GetMapping("/popular")
-//    public List<Film> findPopularFilms(@RequestParam(defaultValue = "10") Long count) {
-//        return filmService.topPopularFilms(count);
-//    }
+    @PutMapping("/{id}/like/{user-id}")
+    public User createLike(@PathVariable(name = "id") Long id, @PathVariable(name = "user-id") Long userId) {
+        log.info("Выполняется добавление лайка пользователем {} к фильму {}.", userId, id);
+        return filmService.createLike(id, userId);
+    }
 
-//    @PutMapping("{id}/like/{user-id}")
-//    public User likeFilm(@PathVariable(name = "id") Long id, @PathVariable(name = "user-id") Long userId) {
-//        log.info("Выполняется добавление лайка пользователем {} к фильму {}.", userId, id);
-//        return filmService.likeFilm(Long id, Long userId);
-//    }
+    @DeleteMapping("/{id}/like/{user-id}")
+    public Map<String, String> deleteLike(@PathVariable(name = "id") Long id,
+                                          @PathVariable(name = "user-id") Long userId) {
+        return filmService.deleteLike(id, userId);
+    }
 
-
+    @GetMapping("/popular")
+    public Collection<Film> findPopularFilms(@RequestParam(defaultValue = "10") Long count) {
+        return filmService.findPopularFilms(count);
+    }
 
 }
