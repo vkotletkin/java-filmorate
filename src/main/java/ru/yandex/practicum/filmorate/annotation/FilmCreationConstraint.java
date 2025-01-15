@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface FilmCreationConstraint {
-    String message() default "The date of the film's creation is incorrect. The date must be after 1895-12-28";
+    String message() default "Дата создания фильма некорректна. Дата создания должна быть после: 1895-12-28";
 
     Class<?>[] groups() default {};
 
