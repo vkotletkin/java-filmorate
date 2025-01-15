@@ -9,8 +9,8 @@ import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ValidationErrorResponse {
 
-    final List<ErrorResponse> validationErrorList;
+    List<ErrorResponse> validationErrorList;
 }

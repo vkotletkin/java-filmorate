@@ -18,6 +18,8 @@ public class FilmController {
 
     private final FilmService filmService;
 
+    private final String likeURI = "/{id}/like/{user-id}";
+
     @GetMapping
     public Collection<Film> findAll() {
         log.info("Запрошен возврат списка всех фильмов.");
@@ -42,14 +44,14 @@ public class FilmController {
         return filmService.deleteFilmById(id);
     }
 
-    @PutMapping("/{id}/like/{user-id}")
+    @PutMapping(likeURI)
     public Film createLike(@PathVariable(name = "id") Long id,
                            @PathVariable(name = "user-id") Long userId) {
         log.info("Выполняется добавление лайка пользователем {} к фильму {}.", userId, id);
         return filmService.createLike(id, userId);
     }
 
-    @DeleteMapping("/{id}/like/{user-id}")
+    @DeleteMapping(likeURI)
     public Map<String, String> deleteLike(@PathVariable(name = "id") Long id,
                                           @PathVariable(name = "user-id") Long userId) {
         return filmService.deleteLike(id, userId);

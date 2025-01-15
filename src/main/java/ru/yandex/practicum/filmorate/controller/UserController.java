@@ -19,6 +19,8 @@ public class UserController {
 
     private final UserService userService;
 
+    private final String friendURI = "/{id}/friends/{friend-id}";
+
     @GetMapping
     public Collection<User> findAll() {
         log.info("Запрошен возврат списка всех пользователей");
@@ -44,21 +46,21 @@ public class UserController {
         return userService.deleteUserById(id);
     }
 
-    @PutMapping("/{id}/friends/{friend-id}")
+    @PutMapping(friendURI)
     public User createFriend(@PathVariable(name = "id") Long id,
                              @PathVariable(name = "friend-id") Long friendId) {
         return userService.createFriend(id, friendId);
     }
 
-    @GetMapping("/{id}/friends")
-    public Set<User> userFriends(@PathVariable(name = "id") Long id) {
-        return userService.getUserFriends(id);
-    }
-
-    @DeleteMapping("/{id}/friends/{friend-id}")
+    @DeleteMapping(friendURI)
     public Map<String, String> deleteFriend(@PathVariable(name = "id") Long id,
                                             @PathVariable(name = "friend-id") Long friendId) {
         return userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public Set<User> userFriends(@PathVariable(name = "id") Long id) {
+        return userService.getUserFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{other-id}")
