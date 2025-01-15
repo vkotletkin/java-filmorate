@@ -31,6 +31,10 @@ public class UserService {
     }
 
     public User updateUser(User user) {
+
+        userStorage.findUserById(user.getId())
+                .orElseThrow(notFoundException("Фильм с идентификатором: {0} - не существует.", user.getId()));
+
         if (user.getFriendsIds() == null) {
             user.setFriendsIds(new HashSet<>());
         }

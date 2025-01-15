@@ -34,6 +34,10 @@ public class FilmService {
     }
 
     public Film updateFilm(Film film) {
+
+        filmStorage.findFilmById(film.getId())
+                .orElseThrow(notFoundException("Фильм с идентификатором: {0} - не существует.", film.getId()));
+
         if (film.getLikedIds() == null) {
             film.setLikedIds(new HashSet<>());
         }
