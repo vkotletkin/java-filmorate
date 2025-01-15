@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static ru.yandex.practicum.filmorate.exception.NotFoundException.notFoundException;
+
 @Component
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
