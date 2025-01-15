@@ -31,8 +31,9 @@ public class UserService {
     }
 
     public User updateUser(User user) {
-        userStorage.findUserById(user.getId())
-                .orElseThrow(notFoundException("Фильма с идентификатором: {0} - не существует.", user.getId()));
+        if (user.getFriendsIds() == null) {
+            user.setFriendsIds(new HashSet<>());
+        }
 
         return userStorage.updateUser(user);
     }
@@ -43,10 +44,10 @@ public class UserService {
 
     public User createFriend(Long id, Long friendId) {
         User user = userStorage.findUserById(id)
-                .orElseThrow(notFoundException("Пользователя с идентификатором: {0} - не существует.", id));
+                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id));
 
         User friendUser = userStorage.findUserById(friendId)
-                .orElseThrow(notFoundException("Пользователя с идентификатором: {0} - не существует.", friendId));
+                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", friendId));
 
         user.getFriendsIds().add(friendId);
         friendUser.getFriendsIds().add(id);
@@ -56,7 +57,7 @@ public class UserService {
 
     public Set<User> getUserFriends(Long id) {
         userStorage.findUserById(id)
-                .orElseThrow(notFoundException("Пользователя с идентификатором: {0} - не существует.", id));
+                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id));
 
         return userStorage.getUsers().stream()
                 .filter(u -> u.getFriendsIds().contains(id))
@@ -65,10 +66,10 @@ public class UserService {
 
     public Map<String, String> deleteFriend(Long id, Long friendId) {
         User user = userStorage.findUserById(id)
-                .orElseThrow(notFoundException("Пользователя с идентификатором: {0} - не существует.", id));
+                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id));
 
         User friendUser = userStorage.findUserById(friendId)
-                .orElseThrow(notFoundException("Пользователя с идентификатором: {0} - не существует.", friendId));
+                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", friendId));
 
         user.getFriendsIds().remove(friendId);
         friendUser.getFriendsIds().remove(id);
@@ -79,10 +80,10 @@ public class UserService {
 
     public Set<User> getCommonFriends(Long id, Long otherId) {
         User user = userStorage.findUserById(id)
-                .orElseThrow(notFoundException("Пользователя с идентификатором: {0} - не существует.", id));
+                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id));
 
         User otherUser = userStorage.findUserById(otherId)
-                .orElseThrow(notFoundException("Пользователя с идентификатором: {0} - не существует.", otherId));
+                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", otherId));
 
         Set<Long> idsIntersection = findIdsIntersection(user.getFriendsIds(), otherUser.getFriendsIds());
 
