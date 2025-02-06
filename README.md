@@ -13,3 +13,15 @@ VALUES (1, 'Test', 'Test Description', '1985-07-23', 500, 1);
 INSERT INTO users (user_id, email, login, name, birthday) 
 VALUES (25, 'test@test.ru', 'testlogin', 'Test', '1985-07-23');
 ```
+
+Удаление пользователя:
+```
+DELETE FROM USERS
+WHERE user_id = 25;
+```
+
+Поиск среднего значения длительности всех фильмов:
+```
+SELECT AVG(duration) AS average_film_duration
+FROM films;
+```
