@@ -1,9 +1,9 @@
-package ru.yandex.practicum.filmorate.storage.impl;
+package ru.yandex.practicum.filmorate.dal.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.dal.FilmDao;
+import ru.yandex.practicum.filmorate.entity.Film;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Slf4j
 @Component
-public class InMemoryFilmStorage implements FilmStorage {
+public class InMemoryFilmDaoImpl implements FilmDao {
     private final Map<Long, Film> films = new HashMap<>();
 
     public Collection<Film> getFilms() {

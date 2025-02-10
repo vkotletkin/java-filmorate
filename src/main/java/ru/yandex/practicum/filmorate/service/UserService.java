@@ -2,8 +2,8 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.dal.UserDao;
+import ru.yandex.practicum.filmorate.entity.User;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -17,40 +17,40 @@ import static ru.yandex.practicum.filmorate.exception.NotFoundException.notFound
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserStorage userStorage;
+    private final UserDao userDao;
 
     public Collection<User> findAll() {
-        return userStorage.getUsers();
+        return userDao.getUsers();
     }
 
     public User createUser(User user) {
         user.setFriendsIds(new HashSet<>());
         User userProcessed = fillEmptyNameWithLogin(user);
 
-        return userStorage.createUser(userProcessed);
+        return userDao.createUser(userProcessed);
     }
 
     public User updateUser(User user) {
 
-        userStorage.findUserById(user.getId())
+        userDao.findUserById(user.getId())
                 .orElseThrow(notFoundException("Фильм с идентификатором: {0} - не существует.", user.getId()));
 
         if (user.getFriendsIds() == null) {
             user.setFriendsIds(new HashSet<>());
         }
 
-        return userStorage.updateUser(user);
+        return userDao.updateUser(user);
     }
 
     public Map<String, String> deleteUserById(Long id) {
-        return userStorage.deleteUserById(id);
+        return userDao.deleteUserById(id);
     }
 
     public User createFriend(Long id, Long friendId) {
-        User user = userStorage.findUserById(id)
+        User user = userDao.findUserById(id)
                 .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id));
 
-        User friendUser = userStorage.findUserById(friendId)
+        User friendUser = userDao.findUserById(friendId)
                 .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", friendId));
 
         user.getFriendsIds().add(friendId);
@@ -60,19 +60,19 @@ public class UserService {
     }
 
     public Set<User> getUserFriends(Long id) {
-        userStorage.findUserById(id)
+        userDao.findUserById(id)
                 .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id));
 
-        return userStorage.getUsers().stream()
+        return userDao.getUsers().stream()
                 .filter(u -> u.getFriendsIds().contains(id))
                 .collect(Collectors.toSet());
     }
 
     public Map<String, String> deleteFriend(Long id, Long friendId) {
-        User user = userStorage.findUserById(id)
+        User user = userDao.findUserById(id)
                 .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id));
 
-        User friendUser = userStorage.findUserById(friendId)
+        User friendUser = userDao.findUserById(friendId)
                 .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", friendId));
 
         user.getFriendsIds().remove(friendId);
@@ -83,15 +83,15 @@ public class UserService {
     }
 
     public Set<User> getCommonFriends(Long id, Long otherId) {
-        User user = userStorage.findUserById(id)
+        User user = userDao.findUserById(id)
                 .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id));
 
-        User otherUser = userStorage.findUserById(otherId)
+        User otherUser = userDao.findUserById(otherId)
                 .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", otherId));
 
         Set<Long> idsIntersection = findIdsIntersection(user.getFriendsIds(), otherUser.getFriendsIds());
 
-        return userStorage.getUsers().stream()
+        return userDao.getUsers().stream()
                 .filter(u -> idsIntersection.contains(u.getId()))
                 .collect(Collectors.toSet());
     }
