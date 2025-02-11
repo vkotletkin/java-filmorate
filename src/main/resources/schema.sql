@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS films
 (
     film_id            INT          NOT NULL,
     name               varchar(255) NOT NULL,
-    description        varchar(255) NOT NULL,
+    description        varchar(200) NOT NULL,
     release_date       timestamp    NOT NULL,
     duration           INT          NOT NULL,
     association_rating INT          NOT NULL,

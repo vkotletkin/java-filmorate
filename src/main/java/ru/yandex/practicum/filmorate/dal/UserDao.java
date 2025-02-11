@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface UserDao {
-    Collection<User> getUsers();
+    Collection<User> findAll();
 
     User createUser(User user);
 

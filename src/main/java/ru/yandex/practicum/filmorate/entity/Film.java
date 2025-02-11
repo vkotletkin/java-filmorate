@@ -11,7 +11,6 @@ import lombok.experimental.FieldDefaults;
 import ru.yandex.practicum.filmorate.annotation.FilmCreationConstraint;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -34,5 +33,5 @@ public class Film {
     @Min(1)
     Long duration;
 
-    Set<Long> likedIds;
+    Long associationRating;
 }

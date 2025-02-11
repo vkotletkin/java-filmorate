@@ -20,7 +20,7 @@ public class UserService {
     private final UserDao userDao;
 
     public Collection<User> findAll() {
-        return userDao.getUsers();
+        return userDao.findAll();
     }
 
     public User createUser(User user) {
@@ -63,7 +63,7 @@ public class UserService {
         userDao.findUserById(id)
                 .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id));
 
-        return userDao.getUsers().stream()
+        return userDao.findAll().stream()
                 .filter(u -> u.getFriendsIds().contains(id))
                 .collect(Collectors.toSet());
     }
@@ -91,7 +91,7 @@ public class UserService {
 
         Set<Long> idsIntersection = findIdsIntersection(user.getFriendsIds(), otherUser.getFriendsIds());
 
-        return userDao.getUsers().stream()
+        return userDao.findAll().stream()
                 .filter(u -> idsIntersection.contains(u.getId()))
                 .collect(Collectors.toSet());
     }

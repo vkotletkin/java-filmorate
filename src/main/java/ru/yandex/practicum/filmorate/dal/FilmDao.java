@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface FilmDao {
 
-    Collection<Film> getFilms();
+    Collection<Film> findAll();
 
     Film createFilm(Film film);
 

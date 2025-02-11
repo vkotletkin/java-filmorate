@@ -18,7 +18,7 @@ public class InMemoryUserDaoImpl implements UserDao {
 
     private final Map<Long, User> users = new HashMap<>();
 
-    public Collection<User> getUsers() {
+    public Collection<User> findAll() {
         log.info("Выполняется получение списка всех пользователей.");
         return users.values();
     }
