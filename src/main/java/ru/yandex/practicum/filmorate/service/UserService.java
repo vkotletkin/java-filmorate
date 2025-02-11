@@ -24,7 +24,7 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        user.setFriendsIds(new HashSet<>());
+//        user.setFriendsIds(new HashSet<>());
         User userProcessed = fillEmptyNameWithLogin(user);
 
         return userDao.createUser(userProcessed);
@@ -35,9 +35,9 @@ public class UserService {
         userDao.findUserById(user.getId())
                 .orElseThrow(notFoundException("Фильм с идентификатором: {0} - не существует.", user.getId()));
 
-        if (user.getFriendsIds() == null) {
-            user.setFriendsIds(new HashSet<>());
-        }
+//        if (user.getFriendsIds() == null) {
+//            user.setFriendsIds(new HashSet<>());
+//        }
 
         return userDao.updateUser(user);
     }
@@ -53,8 +53,9 @@ public class UserService {
         User friendUser = userDao.findUserById(friendId)
                 .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", friendId));
 
-        user.getFriendsIds().add(friendId);
-        friendUser.getFriendsIds().add(id);
+        // TODO: dao create users
+//        user.getFriendsIds().add(friendId);
+//        friendUser.getFriendsIds().add(id);
 
         return user;
     }

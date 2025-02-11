@@ -24,7 +24,7 @@ public class FilmService {
     private final UserDao userDao;
 
     public Collection<Film> findAll() {
-        return filmDao.getFilms();
+        return filmDao.findAll();
     }
 
     public Film createFilm(Film film) {
