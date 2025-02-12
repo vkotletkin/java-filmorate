@@ -10,8 +10,8 @@ import ru.yandex.practicum.filmorate.dal.mapper.UserRowMapper;
 import ru.yandex.practicum.filmorate.entity.User;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Repository("h2User")
@@ -29,25 +29,39 @@ public class H2DatabaseUserDaoImpl implements UserDao {
     @Override
     public User createUser(User user) {
         String query = """
-                INSERT INTO users (user_id, email, login, name, birthday)
-                VALUES (:user_id, :email, :login, :name, :birthday);
+                INSERT INTO users (email, login, name, birthday)
+                VALUES (:email, :login, :name, :birthday);
                 """;
 
-        return addUserData(user, query);
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("user_id", user.getId());
+        params.addValue("email", user.getEmail());
+        params.addValue("login", user.getLogin());
+        params.addValue("name", user.getName());
+        params.addValue("birthday", user.getBirthday());
+        jdbcTemplate.update(query, params);
+
+        return findUserByLogin(user.getLogin()).stream().findFirst().orElse(null);
     }
 
     @Override
     public User updateUser(User user) {
         String query = """
                 UPDATE users
-                SET user_id  = :user_id,
-                    email    = :email,
+                SET email    = :email,
                     login    = :login,
                     name     = :name,
                     birthday = :birthday
                 WHERE user_id = :user_id;
                 """;
-        return addUserData(user, query);
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("user_id", user.getId());
+        params.addValue("email", user.getEmail());
+        params.addValue("login", user.getLogin());
+        params.addValue("name", user.getName());
+        params.addValue("birthday", user.getBirthday());
+        jdbcTemplate.update(query, params);
+        return findUserById(user.getId()).stream().findFirst().orElse(null);
     }
 
     @Override
@@ -64,7 +78,7 @@ public class H2DatabaseUserDaoImpl implements UserDao {
     }
 
     @Override
-    public Optional<User> findUserById(Long id) {
+    public List<User> findUserById(Long id) {
         String query = """
                 SELECT user_id, email, login, name, birthday
                 FROM users
@@ -73,18 +87,20 @@ public class H2DatabaseUserDaoImpl implements UserDao {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("user_id", id);
 
-        return Optional.ofNullable(jdbcTemplate.queryForObject(query, params, new UserRowMapper()));
+        return jdbcTemplate.query(query, params, new UserRowMapper());
     }
 
-    private User addUserData(User user, String query) {
+    @Override
+    public List<User> findUserByLogin(String login) {
+        String query = """
+                SELECT user_id, email, login, name, birthday
+                FROM users
+                WHERE login = :login;
+                """;
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("user_id", user.getId());
-        params.addValue("email", user.getEmail());
-        params.addValue("login", user.getLogin());
-        params.addValue("name", user.getName());
-        params.addValue("birthday", user.getBirthday());
-        jdbcTemplate.update(query, params);
+        params.addValue("login", login);
 
-        return user;
+        return jdbcTemplate.query(query, params, new UserRowMapper());
     }
+
 }

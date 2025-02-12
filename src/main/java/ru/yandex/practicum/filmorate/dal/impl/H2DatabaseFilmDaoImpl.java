@@ -10,8 +10,8 @@ import ru.yandex.practicum.filmorate.dal.mapper.FilmRowMapper;
 import ru.yandex.practicum.filmorate.entity.Film;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Repository("h2Film")
@@ -29,10 +29,18 @@ public class H2DatabaseFilmDaoImpl implements FilmDao {
     @Override
     public Film createFilm(Film film) {
         String query = """
-                INSERT INTO films (film_id, name, description, release_date, duration, association_rating)
-                VALUES (:film_id, :name, :description, :release_date, :duration, :association_rating);
+                INSERT INTO films (name, description, release_date, duration, association_rating)
+                VALUES (:name, :description, :release_date, :duration, :association_rating);
                 """;
-        return addFilmData(film, query);
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("name", film.getName());
+        params.addValue("description", film.getDescription());
+        params.addValue("release_date", film.getReleaseDate());
+        params.addValue("duration", film.getDuration());
+        params.addValue("association_rating", film.getMpa());
+        jdbcTemplate.update(query, params);
+
+        return findFilmByName(film.getName()).stream().findFirst().orElse(null);
     }
 
     @Override
@@ -47,7 +55,16 @@ public class H2DatabaseFilmDaoImpl implements FilmDao {
                     association_rating = :association_rating
                 WHERE film_id = :film_id;
                 """;
-        return addFilmData(film, query);
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("film_id", film.getId());
+        params.addValue("name", film.getName());
+        params.addValue("description", film.getDescription());
+        params.addValue("release_date", film.getReleaseDate());
+        params.addValue("duration", film.getDuration());
+        params.addValue("association_rating", film.getMpa());
+        jdbcTemplate.update(query, params);
+
+        return findFilmById(film.getId()).stream().findFirst().orElse(null);
     }
 
 
@@ -65,7 +82,7 @@ public class H2DatabaseFilmDaoImpl implements FilmDao {
     }
 
     @Override
-    public Optional<Film> findFilmById(Long id) {
+    public List<Film> findFilmById(Long id) {
         String query = """
                 SELECT film_id, name, description, release_date, duration, association_rating
                 FROM films
@@ -74,19 +91,29 @@ public class H2DatabaseFilmDaoImpl implements FilmDao {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("film_id", id);
 
-        return Optional.ofNullable(jdbcTemplate.queryForObject(query, params, new FilmRowMapper()));
+        return jdbcTemplate.query(query, params, new FilmRowMapper());
     }
 
-    private Film addFilmData(Film film, String query) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("film_id", film.getId());
-        params.addValue("name", film.getName());
-        params.addValue("description", film.getDescription());
-        params.addValue("release_date", film.getReleaseDate());
-        params.addValue("duration", film.getDuration());
-        params.addValue("association_rating", film.getAssociationRating());
-        jdbcTemplate.update(query, params);
+    @Override
+    public List<Film> findFilmByLogin(Long id) {
+        return List.of();
+    }
 
-        return film;
+    @Override
+    public List<Film> findFilmByName(Long id) {
+        return List.of();
+    }
+
+    @Override
+    public List<Film> findFilmByName(String name) {
+        String query = """
+                SELECT film_id, name, description, release_date, duration, association_rating
+                FROM films
+                WHERE name = :name;
+                """;
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("name", name);
+
+        return jdbcTemplate.query(query, params, new FilmRowMapper());
     }
 }

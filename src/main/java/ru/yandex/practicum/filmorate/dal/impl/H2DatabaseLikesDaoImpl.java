@@ -2,9 +2,11 @@ package ru.yandex.practicum.filmorate.dal.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dal.LikesDao;
+import ru.yandex.practicum.filmorate.dal.mapper.LikeRowMapper;
 import ru.yandex.practicum.filmorate.entity.Like;
 
 import java.util.List;
@@ -18,31 +20,25 @@ public class H2DatabaseLikesDaoImpl implements LikesDao {
 
     @Override
     public List<Like> findAll() {
-        return List.of();
+        String query = "SELECT like_id, film_id, user_id FROM film_likes";
+        return jdbcTemplate.query(query, new LikeRowMapper());
     }
 
     @Override
-    public List<Like> findLikesByFilmId(Long id) {
-        return List.of();
+    public void addLike(Long filmId, Long userId) {
+        String query = "INSERT INTO film_likes (film_id, user_id) VALUES (:film_id, :user_id)";
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("film_id", filmId);
+        params.addValue("user_id", userId);
+        jdbcTemplate.update(query, params);
     }
 
     @Override
-    public List<Like> findLikesByUserId(Long id) {
-        return List.of();
-    }
-
-    @Override
-    public List<Like> findLikesByFilmIdAndUserId(Long id, Long userId) {
-        return List.of();
-    }
-
-    @Override
-    public Like addLike(Like like) {
-        return null;
-    }
-
-    @Override
-    public Like deleteLike(Like like) {
-        return null;
+    public void deleteLike(Long filmId, Long userId) {
+        String query = "DELETE FROM film_likes WHERE film_id = :film_id AND user_id = :user_id";
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("film_id", filmId);
+        params.addValue("user_id", userId);
+        jdbcTemplate.update(query, params);
     }
 }

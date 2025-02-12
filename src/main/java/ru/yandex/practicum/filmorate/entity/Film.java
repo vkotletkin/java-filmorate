@@ -33,5 +33,6 @@ public class Film {
     @Min(1)
     Long duration;
 
-    Long associationRating;
+    Long mpa;
+    Long genre;
 }

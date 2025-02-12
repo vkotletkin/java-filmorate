@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +49,7 @@ public class UserController {
 
     @PutMapping(friendURI)
     public User createFriend(@PathVariable(name = "id") Long id,
-                             @PathVariable(name = "friend-id") Long friendId) {
+                             @PathVariable(name = "friend-id") @NotNull Long friendId) {
         return userService.createFriend(id, friendId);
     }
 

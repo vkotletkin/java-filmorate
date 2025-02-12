@@ -32,7 +32,10 @@ INSERT INTO ASSOCIATION_RATING (association_id, rating)
 VALUES (5, 'NC-17');
 
 INSERT INTO RELATION_STATUS (STATUS_ID, STATUS)
-VALUES (1, 'confirmed');
+VALUES (1, 'Request Sender By First User');
 
 INSERT INTO RELATION_STATUS (STATUS_ID, STATUS)
-VALUES (2, 'not confirmed');
+VALUES (2, 'Request Sender By Second User');
+
+INSERT INTO RELATION_STATUS (STATUS_ID, STATUS)
+VALUES (3, 'Confirmed');

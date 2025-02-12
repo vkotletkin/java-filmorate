@@ -7,13 +7,8 @@ import java.util.List;
 public interface LikesDao {
     List<Like> findAll();
 
-    List<Like> findLikesByFilmId(Long id);
 
-    List<Like> findLikesByUserId(Long id);
+    void addLike(Long filmId, Long userId);
 
-    List<Like> findLikesByFilmIdAndUserId(Long id, Long userId);
-
-    Like addLike(Like like);
-
-    Like deleteLike(Like like);
+    void deleteLike(Long filmId, Long userId);
 }
