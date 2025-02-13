@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.dal;
 
 
 import ru.yandex.practicum.filmorate.entity.Relation;
-import ru.yandex.practicum.filmorate.entity.User;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ public interface RelationDao {
 
     List<Relation> findFriendsByUserId(Long userId);
 
-    List<User> findCommonFriends(Long firstUserId, Long secondUserId);
+    List<Relation> findCommonFriends(Long firstUserId, Long secondUserId);
 
-    Relation findRelationByUserIds(Long userId, Long friendId);
+    List<Relation> findRelationByUserIds(Long userId, Long friendId);
 }

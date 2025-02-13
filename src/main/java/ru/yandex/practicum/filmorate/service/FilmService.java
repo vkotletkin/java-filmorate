@@ -47,8 +47,8 @@ public class FilmService {
         Film film = filmDao.findFilmById(id).stream().findFirst()
                 .orElseThrow(notFoundException("Фильм с идентификатором: {0} - не существует.", id));
 
-        userDao.findUserById(userId).stream().findFirst()
-                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", userId));
+//        userDao.findUserById(userId).stream().findFirst()
+//                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", userId));
 
         likesDao.addLike(id, userId);
 
@@ -59,8 +59,8 @@ public class FilmService {
         Film film = filmDao.findFilmById(id).stream().findFirst()
                 .orElseThrow(notFoundException("Фильм с идентификатором: {0} - не существует.", id));
 
-        userDao.findUserById(userId).stream().findFirst()
-                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", userId));
+//        userDao.findUserById(userId).stream().findFirst()
+//                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", userId));
 
         likesDao.deleteLike(id, userId);
 

@@ -2,13 +2,17 @@ package ru.yandex.practicum.filmorate.dal.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dal.FilmDao;
 import ru.yandex.practicum.filmorate.dal.mapper.FilmRowMapper;
 import ru.yandex.practicum.filmorate.entity.Film;
 
+import java.sql.PreparedStatement;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +46,16 @@ public class H2DatabaseFilmDaoImpl implements FilmDao {
 
         return findFilmByName(film.getName()).stream().findFirst().orElse(null);
     }
+
+//    public long insertMessage(String query, MapSqlParameterSource param) {
+//        KeyHolder keyHolder = new GeneratedKeyHolder();
+//
+//        jdbcTemplate.update(connection -> {
+//            PreparedStatement ps = connection
+//                    .prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
+//
+//        }
+//    }
 
     @Override
     public Film updateFilm(Film film) {
