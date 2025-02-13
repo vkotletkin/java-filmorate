@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.entity.Film;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface FilmDao {
 
@@ -16,7 +17,7 @@ public interface FilmDao {
 
     Map<String, String> deleteFilmById(Long id);
 
-    List<Film> findFilmById(Long id);
+    Optional<Film> findFilmById(Long id);
 
     List<Film> findFilmByLogin(Long id);
 

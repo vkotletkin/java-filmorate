@@ -26,6 +26,7 @@ public class H2DatabaseRelationDaoImpl implements RelationDao {
 
     @Override
     public void deleteRelation(Long userId, Long friendId) {
+        // TODO: batchUpdate
         jdbcTemplate.update(QUERY_DELETE_RELATION, userId, friendId);
         jdbcTemplate.update(QUERY_DELETE_RELATION_CONFIRMED, userId);
     }

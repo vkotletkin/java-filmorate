@@ -31,6 +31,7 @@ public class UserService {
     public User updateUser(User user) {
         userDao.findUserById(user.getId())
                 .orElseThrow(notFoundException("Пользователь с логином: {0} - не существует.", user.getLogin()));
+        userDao.updateUser(user);
         return user;
     }
 

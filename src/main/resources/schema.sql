@@ -12,11 +12,11 @@ CREATE TABLE IF NOT EXISTS relation_status
     CONSTRAINT pk_status_id PRIMARY KEY (status_id)
 );
 
-CREATE TABLE IF NOT EXISTS association_rating
+CREATE TABLE IF NOT EXISTS MPA
 (
-    association_id BIGINT       NOT NULL,
+    mpa_id BIGINT       NOT NULL,
     rating         varchar(255) NOT NULL,
-    CONSTRAINT pk_association_id PRIMARY KEY (association_id)
+    CONSTRAINT pk_mpa_id PRIMARY KEY (mpa_id)
 );
 
 CREATE TABLE IF NOT EXISTS films
@@ -26,9 +26,9 @@ CREATE TABLE IF NOT EXISTS films
     description        varchar(200)          NOT NULL,
     release_date       timestamp             NOT NULL,
     duration           BIGINT                NOT NULL,
-    association_rating BIGINT,
+    mpa BIGINT,
     CONSTRAINT pk_film_id PRIMARY KEY (film_id),
-    FOREIGN KEY (association_rating) REFERENCES association_rating (association_id) ON DELETE SET NULL
+    FOREIGN KEY (mpa) REFERENCES mpa (mpa_id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS films_genres

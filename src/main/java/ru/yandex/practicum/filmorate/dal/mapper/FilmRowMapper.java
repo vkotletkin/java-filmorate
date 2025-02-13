@@ -19,7 +19,7 @@ public class FilmRowMapper implements RowMapper<Film> {
                 .description(rs.getString("description"))
                 .releaseDate(LocalDate.parse(rs.getString("release_date"), DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss")))
                 .duration(rs.getLong("duration"))
-                .mpa(rs.getLong("association_rating"))
+                .mpa(rs.getLong("mpa"))
                 .build();
     }
 }

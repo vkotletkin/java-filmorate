@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -13,72 +12,81 @@ import ru.yandex.practicum.filmorate.dal.mapper.FilmRowMapper;
 import ru.yandex.practicum.filmorate.entity.Film;
 
 import java.sql.PreparedStatement;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Repository("h2Film")
 @RequiredArgsConstructor
 public class H2DatabaseFilmDaoImpl implements FilmDao {
 
-    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private static final String QUERY_FIND_ALL = """
+            SELECT film_id, name, description, release_date, duration, mpa
+            FROM films;
+            """;
+    private static final String QUERY_CREATE_FILM = """
+            INSERT INTO films (name, description, release_date, duration, mpa)
+            VALUES (?, ?, ?, ?, ?);
+            """;
+
+    private static final String QUERY_UPDATE_FILM = """
+            UPDATE films
+            SET name               = ?,
+                description        = ?,
+                release_date       = ?,
+                duration           = ?,
+                mpa = ?
+            WHERE film_id = ?;
+            """;
+
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public Collection<Film> findAll() {
-        String query = "SELECT film_id, name, description, release_date, duration, association_rating FROM films";
-        return jdbcTemplate.query(query, new FilmRowMapper());
+        return jdbcTemplate.query(QUERY_FIND_ALL, new FilmRowMapper());
     }
 
     @Override
     public Film createFilm(Film film) {
-        String query = """
-                INSERT INTO films (name, description, release_date, duration, association_rating)
-                VALUES (:name, :description, :release_date, :duration, :association_rating);
-                """;
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("name", film.getName());
-        params.addValue("description", film.getDescription());
-        params.addValue("release_date", film.getReleaseDate());
-        params.addValue("duration", film.getDuration());
-        params.addValue("association_rating", film.getMpa());
-        jdbcTemplate.update(query, params);
-
-        return findFilmByName(film.getName()).stream().findFirst().orElse(null);
+        long key = insertMessage(film);
+        film.setId(key);
+        return film;
     }
 
-//    public long insertMessage(String query, MapSqlParameterSource param) {
-//        KeyHolder keyHolder = new GeneratedKeyHolder();
-//
-//        jdbcTemplate.update(connection -> {
-//            PreparedStatement ps = connection
-//                    .prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
-//
-//        }
-//    }
+    private long insertMessage(Film film) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(QUERY_CREATE_FILM, PreparedStatement.RETURN_GENERATED_KEYS);
+            ps.setString(1, film.getName());
+            ps.setString(2, film.getDescription());
+            ps.setString(3, String.valueOf(film.getReleaseDate()));
+            ps.setString(4, film.getDuration().toString());
+            ps.setString(5, film.getMpa().toString());
+            return ps;
+        }, keyHolder);
+        return Objects.requireNonNull(keyHolder.getKey()).longValue();
+    }
+
+    private long updateMessage(Film film) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(QUERY_UPDATE_FILM,
+                    PreparedStatement.RETURN_GENERATED_KEYS);
+            ps.setString(1, film.getName());
+            ps.setString(2, film.getDescription());
+            ps.setString(3, String.valueOf(film.getReleaseDate()));
+            ps.setString(4, film.getDuration().toString());
+            ps.setString(5, film.getMpa().toString());
+            ps.setLong(6, film.getId());
+            return ps;
+        }, keyHolder);
+        return Objects.requireNonNull(keyHolder.getKey()).longValue();
+    }
 
     @Override
     public Film updateFilm(Film film) {
-        String query = """
-                UPDATE films
-                SET film_id            = :film_id,
-                    name               = :name,
-                    description        = :description,
-                    release_date       = :release_date,
-                    duration           = :duration,
-                    association_rating = :association_rating
-                WHERE film_id = :film_id;
-                """;
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("film_id", film.getId());
-        params.addValue("name", film.getName());
-        params.addValue("description", film.getDescription());
-        params.addValue("release_date", film.getReleaseDate());
-        params.addValue("duration", film.getDuration());
-        params.addValue("association_rating", film.getMpa());
-        jdbcTemplate.update(query, params);
-
-        return findFilmById(film.getId()).stream().findFirst().orElse(null);
+        long key = updateMessage(film);
+        film.setId(key);
+        return film;
     }
 
 
@@ -96,16 +104,13 @@ public class H2DatabaseFilmDaoImpl implements FilmDao {
     }
 
     @Override
-    public List<Film> findFilmById(Long id) {
+    public Optional<Film> findFilmById(Long id) {
         String query = """
-                SELECT film_id, name, description, release_date, duration, association_rating
+                SELECT film_id, name, description, release_date, duration, mpa
                 FROM films
-                WHERE film_id = :film_id;
+                WHERE film_id = ?
                 """;
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("film_id", id);
-
-        return jdbcTemplate.query(query, params, new FilmRowMapper());
+        return Optional.ofNullable(jdbcTemplate.queryForObject(query, new FilmRowMapper(), id));
     }
 
     @Override
@@ -120,14 +125,6 @@ public class H2DatabaseFilmDaoImpl implements FilmDao {
 
     @Override
     public List<Film> findFilmByName(String name) {
-        String query = """
-                SELECT film_id, name, description, release_date, duration, association_rating
-                FROM films
-                WHERE name = :name;
-                """;
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("name", name);
-
-        return jdbcTemplate.query(query, params, new FilmRowMapper());
+        return List.of();
     }
 }
