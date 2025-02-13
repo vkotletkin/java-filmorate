@@ -114,17 +114,17 @@ public class H2DatabaseFilmDaoImpl implements FilmDao {
     }
 
     @Override
-    public List<Film> findFilmByLogin(Long id) {
-        return List.of();
-    }
-
-    @Override
-    public List<Film> findFilmByName(Long id) {
-        return List.of();
-    }
-
-    @Override
-    public List<Film> findFilmByName(String name) {
-        return List.of();
+    public List<Film> findPopularFilms(Long count) {
+        String query = """
+                SELECT f.FILM_ID, NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA
+                FROM FILMS f
+                INNER JOIN
+                (SELECT FILM_ID, COUNT(*) AS LIKE_COUNT
+                FROM FILM_LIKES
+                GROUP BY FILM_ID
+                ORDER BY LIKE_COUNT DESC
+                LIMIT ?) lc ON (f.FILM_ID = lc.FILM_ID)
+                """;
+        return jdbcTemplate.query(query, new FilmRowMapper(), count);
     }
 }

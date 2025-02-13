@@ -19,9 +19,5 @@ public interface FilmDao {
 
     Optional<Film> findFilmById(Long id);
 
-    List<Film> findFilmByLogin(Long id);
-
-    List<Film> findFilmByName(Long id);
-
-    List<Film> findFilmByName(String name);
+    List<Film> findPopularFilms(Long count);
 }

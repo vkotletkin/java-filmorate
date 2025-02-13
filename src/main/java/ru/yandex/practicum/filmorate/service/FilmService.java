@@ -80,7 +80,7 @@ public class FilmService {
     }
 
     public Map<String, String> deleteLike(Long id, Long userId) {
-        Film film = filmDao.findFilmById(id).stream().findFirst()
+        filmDao.findFilmById(id).stream().findFirst()
                 .orElseThrow(notFoundException("Фильм с идентификатором: {0} - не существует.", id));
 
         userDao.findUserById(userId)
@@ -94,12 +94,8 @@ public class FilmService {
     }
 
     public Collection<Film> findPopularFilms(Long count) {
-//        return filmDao.findAll().stream()
-//                .sorted(Comparator.comparing(u -> u.getLikedIds().size()))
-//                .skip(Math.max(0, filmDao.getFilms().size() - count))
-//                .toList().reversed();
-        return filmDao.findAll();
-        // TODO: REFACTOR!!!!
+        // TODO: set dto
+        return filmDao.findPopularFilms(count);
     }
 
 }
