@@ -22,6 +22,12 @@ public class H2DatabaseGenreDaoImpl implements GenreDao {
 
     private final JdbcTemplate jdbcTemplate;
 
+    private static final String QUERY_FOR_GET_FILM_GENRES = """
+            SELECT DISTINCT f.GENRE_ID AS GENRE_ID, g.GENRE_NAME AS GENRE_NAME
+                             FROM FILMS_GENRES f
+                             INNER JOIN GENRES g ON f.GENRE_ID = g.GENRE_ID
+                             WHERE f.film_id = ?""";
+
     public void createGenreBatch(Long filmId, final List<GenreDto> genres) {
         jdbcTemplate.batchUpdate("INSERT INTO FILMS_GENRES (FILM_ID, GENRE_ID) VALUES (?, ?)",
                 new BatchPreparedStatementSetter() {
@@ -51,11 +57,6 @@ public class H2DatabaseGenreDaoImpl implements GenreDao {
 
     @Override
     public List<Genre> findGenresByFilmId(Long filmId) {
-        String QUERY_FOR_GET_FILM_GENRES = """
-                SELECT DISTINCT f.GENRE_ID AS GENRE_ID, g.GENRE_NAME AS GENRE_NAME
-                                 FROM FILMS_GENRES f
-                                 INNER JOIN GENRES g ON f.GENRE_ID = g.GENRE_ID
-                                 WHERE f.film_id = ?""";
         return jdbcTemplate.query(QUERY_FOR_GET_FILM_GENRES, new GenreRowMapper(), filmId);
     }
 }
