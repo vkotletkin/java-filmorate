@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.dal.MpaDao;
 import ru.yandex.practicum.filmorate.dal.mapper.MpaRowMapper;
 import ru.yandex.practicum.filmorate.entity.Mpa;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -16,13 +17,21 @@ import java.util.Optional;
 public class H2DatabaseMpaDaoImpl implements MpaDao {
 
     private static final String QUERY_FIND_BY_ID = """
-            SELECT MPA_ID, RATING FROM MPA
+            SELECT MPA_ID, NAME FROM MPA
             WHERE MPA_ID = ?
             """;
+
+    private static final String QUERY_FIND_ALL = "SELECT MPA_ID, NAME FROM MPA";
+
     private final JdbcTemplate jdbcTemplate;
 
     @Override
     public Optional<Mpa> findById(Long id) {
         return Optional.ofNullable(jdbcTemplate.queryForObject(QUERY_FIND_BY_ID, new MpaRowMapper(), id));
+    }
+
+    @Override
+    public List<Mpa> findAll() {
+        return jdbcTemplate.query(QUERY_FIND_ALL, new MpaRowMapper());
     }
 }

@@ -9,8 +9,11 @@ import ru.yandex.practicum.filmorate.dto.GenreDto;
 import ru.yandex.practicum.filmorate.dto.MpaDto;
 import ru.yandex.practicum.filmorate.entity.Film;
 import ru.yandex.practicum.filmorate.entity.Genre;
+import ru.yandex.practicum.filmorate.entity.Mpa;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.mapper.GenreMapper;
+import ru.yandex.practicum.filmorate.mapper.MpaMapper;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,15 +43,17 @@ public class FilmService {
         MpaDto mpaDto = filmDto.getMpa();
         mpaDao.findById(mpaDto.getId()).orElseThrow(notFoundException("mpa not exists"));
         List<GenreDto> genres = filmDto.getGenres();
-        List<Long> genreList = genreDao.findAll().stream().map(Genre::getId).toList();
-        List<Long> genreListDto = genres.stream().map(GenreDto::getId).toList();
-        Set<Long> result = genreListDto.stream().filter(genreList::contains).collect(Collectors.toSet());
-        if (result.size() != genreListDto.size()) {
-            throw new NotFoundException("genre not exists");
+        Film film = filmDao.createFilm(FilmMapper.mapToFilm(filmDto));
+        if (genres != null && !genres.isEmpty()) {
+            List<Long> genreList = genreDao.findAll().stream().map(Genre::getId).toList(); // get allIdsFrom prishedw Dto
+            List<Long> genreListDto = genres.stream().map(GenreDto::getId).distinct().toList();
+            Set<Long> result = genreListDto.stream().filter(genreList::contains).collect(Collectors.toSet());
+            if (result.size() != genreListDto.size()) {
+                throw new NotFoundException("genre not exists");
+            }
+            genreDao.createGenreBatch(film.getId(), genres);
         }
 
-        Film film = filmDao.createFilm(FilmMapper.mapToFilm(filmDto));
-        genreDao.createGenreBatch(film.getId(), genres);
         filmDto.setId(film.getId());
         return filmDto;
 
@@ -96,6 +101,37 @@ public class FilmService {
     public Collection<Film> findPopularFilms(Long count) {
         // TODO: set dto
         return filmDao.findPopularFilms(count);
+    }
+
+    public List<Genre> findGenres() {
+        return genreDao.findAll();
+    }
+
+    public Genre findGenreById(Long id) {
+        return genreDao.findById(id).orElseThrow(notFoundException("genre not exists"));
+    }
+
+    public List<Mpa> findAllMpa() {
+        return mpaDao.findAll();
+    }
+
+    public Mpa findMpaById(Long id) {
+        return mpaDao.findById(id).orElseThrow(notFoundException("mpa not exists"));
+    }
+
+    public FilmDto getFilmFull(Long id) {
+        FilmDto filmDto = new FilmDto();
+        Film film = filmDao.findFilmById(id).orElseThrow(notFoundException("film not exists"));
+        filmDto.setId(film.getId());
+        filmDto.setName(film.getName());
+        filmDto.setDescription(film.getDescription());
+        filmDto.setReleaseDate(film.getReleaseDate());
+        filmDto.setDuration(film.getDuration());
+
+        filmDto.setMpa(MpaMapper.mapToDto(mpaDao.findById(film.getMpa()).orElseThrow(notFoundException("mpa not exists"))));
+        filmDto.setGenres(genreDao.findGenresByFilmId(id).stream().map(GenreMapper::mapToDto).collect(Collectors.toList()));
+
+        return filmDto;
     }
 
 }

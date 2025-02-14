@@ -16,19 +16,19 @@ VALUES (5, 'Документальный');
 INSERT INTO GENRES (genre_id, genre_name)
 VALUES (6, 'Боевик');
 
-INSERT INTO MPA (MPA_ID, rating)
+INSERT INTO MPA (MPA_ID, name)
 VALUES (1, 'G');
 
-INSERT INTO MPA (MPA_ID, rating)
+INSERT INTO MPA (MPA_ID, name)
 VALUES (2, 'PG');
 
-INSERT INTO MPA (MPA_ID, rating)
+INSERT INTO MPA (MPA_ID, name)
 VALUES (3, 'PG-13');
 
-INSERT INTO MPA (MPA_ID, rating)
+INSERT INTO MPA (MPA_ID, name)
 VALUES (4, 'R');
 
-INSERT INTO MPA (MPA_ID, rating)
+INSERT INTO MPA (MPA_ID, name)
 VALUES (5, 'NC-17');
 
 INSERT INTO RELATION_STATUS (STATUS_ID, STATUS)

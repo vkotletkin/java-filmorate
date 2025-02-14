@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS relation_status
 CREATE TABLE IF NOT EXISTS MPA
 (
     mpa_id BIGINT       NOT NULL,
-    rating         varchar(255) NOT NULL,
+    name         varchar(255) NOT NULL,
     CONSTRAINT pk_mpa_id PRIMARY KEY (mpa_id)
 );
 
