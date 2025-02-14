@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.dal;
 
 import ru.yandex.practicum.filmorate.dto.GenreDto;
-import ru.yandex.practicum.filmorate.entity.FilmGenre;
 import ru.yandex.practicum.filmorate.entity.Genre;
 
 import java.util.List;
