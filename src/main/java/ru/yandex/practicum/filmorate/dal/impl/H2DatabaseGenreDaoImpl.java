@@ -15,6 +15,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.yandex.practicum.filmorate.dal.impl.query.GenreQuery.*;
+
 @Slf4j
 @Repository
 @RequiredArgsConstructor
@@ -22,16 +24,9 @@ public class H2DatabaseGenreDaoImpl implements GenreDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private static final String QUERY_FOR_GET_FILM_GENRES = """
-            SELECT DISTINCT f.GENRE_ID AS GENRE_ID, g.GENRE_NAME AS GENRE_NAME
-                             FROM FILMS_GENRES f
-                             INNER JOIN GENRES g ON f.GENRE_ID = g.GENRE_ID
-                             WHERE f.film_id = ?""";
-
     public void createGenreBatch(Long filmId, final List<GenreDto> genres) {
-        jdbcTemplate.batchUpdate("INSERT INTO FILMS_GENRES (FILM_ID, GENRE_ID) VALUES (?, ?)",
+        jdbcTemplate.batchUpdate(QUERY_BATCH_INSERT,
                 new BatchPreparedStatementSetter() {
-
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
                         ps.setLong(1, filmId);
                         ps.setLong(2, genres.get(i).getId());
@@ -40,19 +35,17 @@ public class H2DatabaseGenreDaoImpl implements GenreDao {
                     public int getBatchSize() {
                         return genres.size();
                     }
-
                 });
     }
 
     @Override
     public List<Genre> findAll() {
-        return jdbcTemplate.query("SELECT GENRE_ID, GENRE_NAME FROM GENRES;", new GenreRowMapper());
+        return jdbcTemplate.query(QUERY_FIND_ALL, new GenreRowMapper());
     }
 
     @Override
     public Optional<Genre> findById(Long id) {
-        return Optional.ofNullable(jdbcTemplate.queryForObject("SELECT GENRE_ID, GENRE_NAME FROM GENRES WHERE GENRE_ID = ?;",
-                new GenreRowMapper(), id));
+        return Optional.ofNullable(jdbcTemplate.queryForObject(QUERY_FIND_BY_ID, new GenreRowMapper(), id));
     }
 
     @Override

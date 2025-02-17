@@ -8,41 +8,25 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dal.FilmDao;
+import ru.yandex.practicum.filmorate.dal.impl.query.FilmQuery;
 import ru.yandex.practicum.filmorate.dal.mapper.FilmRowMapper;
 import ru.yandex.practicum.filmorate.entity.Film;
 
 import java.sql.PreparedStatement;
 import java.util.*;
 
+import static ru.yandex.practicum.filmorate.dal.impl.query.FilmQuery.*;
+
 @Slf4j
 @Repository("h2Film")
 @RequiredArgsConstructor
 public class H2DatabaseFilmDaoImpl implements FilmDao {
 
-    private static final String QUERY_FIND_ALL = """
-            SELECT film_id, name, description, release_date, duration, mpa
-            FROM films;
-            """;
-    private static final String QUERY_CREATE_FILM = """
-            INSERT INTO films (name, description, release_date, duration, mpa)
-            VALUES (?, ?, ?, ?, ?);
-            """;
-
-    private static final String QUERY_UPDATE_FILM = """
-            UPDATE films
-            SET name               = ?,
-                description        = ?,
-                release_date       = ?,
-                duration           = ?,
-                mpa = ?
-            WHERE film_id = ?;
-            """;
-
     private final JdbcTemplate jdbcTemplate;
 
     @Override
     public Collection<Film> findAll() {
-        return jdbcTemplate.query(QUERY_FIND_ALL, new FilmRowMapper());
+        return jdbcTemplate.query(FilmQuery.QUERY_FIND_ALL, new FilmRowMapper());
     }
 
     @Override
@@ -89,42 +73,22 @@ public class H2DatabaseFilmDaoImpl implements FilmDao {
         return film;
     }
 
-
     @Override
     public Map<String, String> deleteFilmById(Long id) {
-        String query = """
-                DELETE FROM films
-                WHERE film_id = :film_id;
-                """;
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("film_id", id);
-        jdbcTemplate.update(query, params);
+        jdbcTemplate.update(QUERY_DELETE_FILM_BY_ID, params);
 
         return Map.of("description", String.format("Фильм с идентификатором: %d успешно удален.", id));
     }
 
     @Override
     public Optional<Film> findFilmById(Long id) {
-        String query = """
-                SELECT film_id, name, description, release_date, duration, mpa
-                FROM films
-                WHERE film_id = ?
-                """;
-        return Optional.ofNullable(jdbcTemplate.queryForObject(query, new FilmRowMapper(), id));
+        return Optional.ofNullable(jdbcTemplate.queryForObject(QUERY_FIND_FILM_BY_ID, new FilmRowMapper(), id));
     }
 
     @Override
     public List<Film> findPopularFilms(Long count) {
-        String query = """
-                SELECT f.FILM_ID, NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA
-                FROM FILMS f
-                INNER JOIN
-                (SELECT FILM_ID, COUNT(*) AS LIKE_COUNT
-                FROM FILM_LIKES
-                GROUP BY FILM_ID
-                ORDER BY LIKE_COUNT DESC
-                LIMIT ?) lc ON (f.FILM_ID = lc.FILM_ID)
-                """;
-        return jdbcTemplate.query(query, new FilmRowMapper(), count);
+        return jdbcTemplate.query(QUERY_FIND_POPULAR_FILMS, new FilmRowMapper(), count);
     }
 }

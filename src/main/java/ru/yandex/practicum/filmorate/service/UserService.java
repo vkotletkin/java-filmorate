@@ -46,16 +46,12 @@ public class UserService {
         User friendUser = userDao.findUserById(friendId)
                 .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", friendId));
 
-        // TODO: dao create users
-
-        //Relation currentRelation = relationDao.findRelationByUserIds(user.getId(), friendId).stream().findFirst().orElseThrow(notFoundException("Not found"));
         List<Relation> currentRelation = relationDao.findRelationByUserIds(user.getId(), friendId);
 
         if (!currentRelation.isEmpty()) {
             if (currentRelation.getFirst().getRelationStatus() == 2L) {
                 relationDao.createRelation(user.getId(), friendId, 3L);
             }
-            // if 3: exists - pohui, if 1L - exists pohui
         } else {
             relationDao.createRelation(user.getId(), friendUser.getId(), 1L);
         }
@@ -67,31 +63,38 @@ public class UserService {
         userDao.findUserById(id)
                 .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id));
 
-        List<Long> inputs = relationDao.findFriendsByUserId(id)
+        List<Long> friendsIds = getFriendsIds(id);
+
+        return friendsIds.stream().map(u -> userDao.findUserById(u)
+                        .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id)))
+                .collect(Collectors.toSet());
+    }
+
+    private List<Long> getFriendsIds(Long id) {
+        List<Long> idsOnUserColumn = relationDao.findFriendsByUserId(id)
                 .stream()
                 .map(Relation::getUserId)
                 .filter(u -> !u.equals(id)).toList();
 
-        List<Long> inputs2 = relationDao.findFriendsByUserId(id)
+        List<Long> idsOnFriendColumn = relationDao.findFriendsByUserId(id)
                 .stream()
                 .map(Relation::getFriendId)
                 .filter(u -> !u.equals(id)).toList();
 
-        List<Long> a = new ArrayList<>(inputs);
-        a.addAll(inputs2);
+        List<Long> allIds = new ArrayList<>();
+        allIds.addAll(idsOnUserColumn);
+        allIds.addAll(idsOnFriendColumn);
 
-        return a.stream().map(u -> userDao.findUserById(u).get()).collect(Collectors.toSet());
-        // todo: refactor
+        return allIds;
     }
 
     public Map<String, String> deleteFriend(Long id, Long friendId) {
-        User user = userDao.findUserById(id)
+        userDao.findUserById(id)
                 .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id));
-
-        User friendUser = userDao.findUserById(friendId)
+        userDao.findUserById(friendId)
                 .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", friendId));
 
-        relationDao.deleteRelation(user.getId(), friendId);
+        relationDao.deleteRelation(id, friendId);
 
         return Map.of("description",
                 String.format("Пользователи с идентификаторами: %d и %d больше не друзья!", id, friendId));
@@ -99,42 +102,19 @@ public class UserService {
 
     //
     public Set<User> getCommonFriends(Long id, Long otherId) {
-        User user = userDao.findUserById(id)
+        userDao.findUserById(id)
                 .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id));
 
-        User otherUser = userDao.findUserById(otherId)
+        userDao.findUserById(otherId)
                 .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", otherId));
 
-        //Set<Long> idsIntersection = findIdsIntersection(user.getFriendsIds(), otherUser.getFriendsIds());
+        List<Long> firstUserIds = getFriendsIds(id);
+        List<Long> secondUserIds = getFriendsIds(otherId);
 
-        List<Long> inputs = relationDao.findFriendsByUserId(id)
-                .stream()
-                .map(Relation::getUserId)
-                .filter(u -> !u.equals(id)).toList();
-
-        List<Long> inputs2 = relationDao.findFriendsByUserId(id)
-                .stream()
-                .map(Relation::getFriendId)
-                .filter(u -> !u.equals(id)).toList();
-
-        List<Long> inputs3 = relationDao.findFriendsByUserId(otherId)
-                .stream()
-                .map(Relation::getUserId)
-                .filter(u -> !u.equals(otherId)).toList();
-
-        List<Long> inputs4 = relationDao.findFriendsByUserId(otherId)
-                .stream()
-                .map(Relation::getFriendId)
-                .filter(u -> !u.equals(otherId)).toList();
-
-        List<Long> a = new ArrayList<>(inputs);
-        a.addAll(inputs2);
-
-        List<Long> b = new ArrayList<>(inputs3);
-        b.addAll(inputs4);
-
-        return findIdsIntersection(new HashSet<>(a), new HashSet<>(b)).stream()
-                .map(u -> userDao.findUserById(u).get()).collect(Collectors.toSet());
+        return findIdsIntersection(new HashSet<>(firstUserIds), new HashSet<>(secondUserIds)).stream()
+                .map(u -> userDao.findUserById(u)
+                        .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", u)))
+                .collect(Collectors.toSet());
     }
 
     //
@@ -142,14 +122,12 @@ public class UserService {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-
         return user;
     }
 
     private Set<Long> findIdsIntersection(Set<Long> firstIds, Set<Long> secondIds) {
         Set<Long> intersection = new HashSet<>(firstIds);
         intersection.retainAll(secondIds);
-
         return intersection;
     }
 }

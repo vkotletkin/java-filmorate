@@ -46,15 +46,13 @@ public class FilmController {
     }
 
     @PutMapping(likeURI)
-    public Film createLike(@PathVariable(name = "id") Long id,
-                           @PathVariable(name = "user-id") Long userId) {
+    public Film createLike(@PathVariable(name = "id") Long id, @PathVariable(name = "user-id") Long userId) {
         log.info("Выполняется добавление лайка пользователем {} к фильму {}.", userId, id);
         return filmService.createLike(id, userId);
     }
 
     @DeleteMapping(likeURI)
-    public Map<String, String> deleteLike(@PathVariable(name = "id") Long id,
-                                          @PathVariable(name = "user-id") Long userId) {
+    public Map<String, String> deleteLike(@PathVariable(name = "id") Long id, @PathVariable(name = "user-id") Long userId) {
         return filmService.deleteLike(id, userId);
     }
 
@@ -67,5 +65,4 @@ public class FilmController {
     public FilmDto getFilm(@PathVariable Long id) {
         return filmService.getFilmFull(id);
     }
-
 }

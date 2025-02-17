@@ -11,17 +11,13 @@ import ru.yandex.practicum.filmorate.entity.Mpa;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.yandex.practicum.filmorate.dal.impl.query.MpaQuery.QUERY_FIND_ALL;
+import static ru.yandex.practicum.filmorate.dal.impl.query.MpaQuery.QUERY_FIND_BY_ID;
+
 @Slf4j
 @Repository
 @RequiredArgsConstructor
 public class H2DatabaseMpaDaoImpl implements MpaDao {
-
-    private static final String QUERY_FIND_BY_ID = """
-            SELECT MPA_ID, NAME FROM MPA
-            WHERE MPA_ID = ?
-            """;
-
-    private static final String QUERY_FIND_ALL = "SELECT MPA_ID, NAME FROM MPA";
 
     private final JdbcTemplate jdbcTemplate;
 

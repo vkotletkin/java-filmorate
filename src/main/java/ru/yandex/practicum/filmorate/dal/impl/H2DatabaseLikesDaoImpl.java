@@ -10,6 +10,10 @@ import ru.yandex.practicum.filmorate.entity.Like;
 
 import java.util.List;
 
+import static ru.yandex.practicum.filmorate.dal.impl.query.FilmQuery.QUERY_FIND_ALL;
+import static ru.yandex.practicum.filmorate.dal.impl.query.LikeQuery.QUERY_ADD_LIKE;
+import static ru.yandex.practicum.filmorate.dal.impl.query.LikeQuery.QUERY_DELETE_LIKE;
+
 @Slf4j
 @Repository
 @RequiredArgsConstructor
@@ -19,19 +23,16 @@ public class H2DatabaseLikesDaoImpl implements LikesDao {
 
     @Override
     public List<Like> findAll() {
-        String query = "SELECT like_id, film_id, user_id FROM film_likes";
-        return jdbcTemplate.query(query, new LikeRowMapper());
+        return jdbcTemplate.query(QUERY_FIND_ALL, new LikeRowMapper());
     }
 
     @Override
     public void addLike(Long filmId, Long userId) {
-        String query = "INSERT INTO film_likes (film_id, user_id) VALUES (?, ?)";
-        jdbcTemplate.update(query, filmId, userId);
+        jdbcTemplate.update(QUERY_ADD_LIKE, filmId, userId);
     }
 
     @Override
     public void deleteLike(Long filmId, Long userId) {
-        String query = "DELETE FROM film_likes WHERE film_id = ? AND user_id = ?";
-        jdbcTemplate.update(query, filmId, userId);
+        jdbcTemplate.update(QUERY_DELETE_LIKE, filmId, userId);
     }
 }

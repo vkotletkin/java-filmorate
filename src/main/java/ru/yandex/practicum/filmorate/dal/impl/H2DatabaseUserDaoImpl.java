@@ -47,7 +47,7 @@ public class H2DatabaseUserDaoImpl implements UserDao {
     @Override
     public Map<String, String> deleteUserById(Long id) {
         jdbcTemplate.update(QUERY_DELETE_USER_BY_ID, id);
-        return Map.of("description", String.format("Пользоавтель с идентификатором: %d успешно удален.", id));
+        return Map.of("description", String.format("Пользователь с идентификатором: %d успешно удален.", id));
     }
 
     @Override
