@@ -42,7 +42,7 @@ public class FilmService {
     public FilmDto createFilm(FilmDto filmDto) {
         MpaDto mpaDto = filmDto.getMpa();
         List<GenreDto> genres = filmDto.getGenres();
-        mpaDao.findById(mpaDto.getId()).orElseThrow(notFoundException("Такого MPA не существует."));
+        mpaDao.findById(mpaDto.getId()).orElseThrow(notFoundException("MPA с идентификатором {0} - не существует", mpaDto.getId()));
 
         Film film = filmDao.createFilm(FilmMapper.mapToFilm(filmDto));
         if (genres != null && !genres.isEmpty()) {
