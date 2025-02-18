@@ -20,3 +20,7 @@ MERGE INTO RELATION_STATUS
     VALUES (1, 'Request Sender By First User'),
            (2, 'Request Sender By Second User'),
            (3, 'Confirmed');
+
+MERGE INTO USERS (USER_ID, EMAIL, LOGIN, BIRTHDAY, NAME)
+    KEY (USER_ID)
+    VALUES (1, 'vkotletkin@google.com', 'vkotletkin', '2001-01-02', 'Vladislav Kotletkin');
