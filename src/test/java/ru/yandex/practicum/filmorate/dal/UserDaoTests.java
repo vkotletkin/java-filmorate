@@ -1,8 +1,6 @@
 package ru.yandex.practicum.filmorate.dal;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -26,21 +24,25 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class UserDaoTests {
     private final H2DatabaseUserDaoImpl dao;
 
-//    @Test
-//    public void testFindUserById() {
-//        Optional<User> userOptional = dao.findUserById(1L);
-//
-//        assertThat(userOptional)
-//                .isPresent()
-//                .hasValueSatisfying(user ->
-//                        assertThat(user).hasFieldOrPropertyWithValue("id", 1L)
-//                );
-//    }
-//
-//    @Test
-//    public void testFindAllUsers() {
-//        Collection<User> user = dao.findAll();
-//
-//        assertThat(user.size()).isEqualTo(1);
-//    }
+    @Test
+    public void testUser() {
+        Collection<User> users = dao.findAll();
+        assertThat(users.size()).isEqualTo(0);
+
+        dao.createUser(UserDefinition.userLucBesson);
+        users = dao.findAll();
+        assertThat(users.size()).isEqualTo(1);
+
+        Optional<User> userOptional = dao.findUserById(1L);
+
+        assertThat(userOptional)
+                .isPresent()
+                .hasValueSatisfying(user ->
+                        assertThat(user).hasFieldOrPropertyWithValue("id", 1L)
+                );
+
+        dao.deleteUserById(1L);
+        users = dao.findAll();
+        assertThat(users.size()).isEqualTo(0);
+    }
 }

@@ -15,18 +15,18 @@ CREATE TABLE IF NOT EXISTS relation_status
 CREATE TABLE IF NOT EXISTS MPA
 (
     mpa_id BIGINT       NOT NULL,
-    name         varchar(255) NOT NULL,
+    name   varchar(255) NOT NULL,
     CONSTRAINT pk_mpa_id PRIMARY KEY (mpa_id)
 );
 
 CREATE TABLE IF NOT EXISTS films
 (
-    film_id            BIGINT AUTO_INCREMENT NOT NULL,
-    name               varchar(255)          NOT NULL,
-    description        varchar(200)          NOT NULL,
-    release_date       timestamp             NOT NULL,
-    duration           BIGINT                NOT NULL,
-    mpa BIGINT,
+    film_id      BIGINT AUTO_INCREMENT NOT NULL,
+    name         varchar(255)          NOT NULL,
+    description  varchar(200)          NOT NULL,
+    release_date timestamp             NOT NULL,
+    duration     BIGINT                NOT NULL,
+    mpa          BIGINT,
     CONSTRAINT pk_film_id PRIMARY KEY (film_id),
     FOREIGN KEY (mpa) REFERENCES mpa (mpa_id) ON DELETE SET NULL
 );
