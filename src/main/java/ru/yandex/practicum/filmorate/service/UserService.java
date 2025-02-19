@@ -16,6 +16,7 @@ import static ru.yandex.practicum.filmorate.exception.NotFoundException.notFound
 @RequiredArgsConstructor
 public class UserService {
 
+    private static final String USER_ERROR_MESSAGE = "Пользователь с идентификатором: {0} - не существует.";
     private final UserDao userDao;
     private final RelationDao relationDao;
 
@@ -30,7 +31,7 @@ public class UserService {
 
     public User updateUser(User user) {
         userDao.findUserById(user.getId())
-                .orElseThrow(notFoundException("Пользователь с логином: {0} - не существует.", user.getLogin()));
+                .orElseThrow(notFoundException(USER_ERROR_MESSAGE, user.getLogin()));
         userDao.updateUser(user);
         return user;
     }
@@ -41,10 +42,10 @@ public class UserService {
 
     public User createFriend(Long id, Long friendId) {
         User user = userDao.findUserById(id)
-                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id));
+                .orElseThrow(notFoundException(USER_ERROR_MESSAGE, id));
 
         User friendUser = userDao.findUserById(friendId)
-                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", friendId));
+                .orElseThrow(notFoundException(USER_ERROR_MESSAGE, friendId));
 
         List<Relation> currentRelation = relationDao.findRelationByUserIds(user.getId(), friendId);
 
@@ -61,12 +62,12 @@ public class UserService {
 
     public Set<User> getUserFriends(Long id) {
         userDao.findUserById(id)
-                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id));
+                .orElseThrow(notFoundException(USER_ERROR_MESSAGE, id));
 
         List<Long> friendsIds = getFriendsIds(id);
 
         return friendsIds.stream().map(u -> userDao.findUserById(u)
-                        .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id)))
+                        .orElseThrow(notFoundException(USER_ERROR_MESSAGE, id)))
                 .collect(Collectors.toSet());
     }
 
@@ -90,9 +91,9 @@ public class UserService {
 
     public Map<String, String> deleteFriend(Long id, Long friendId) {
         userDao.findUserById(id)
-                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id));
+                .orElseThrow(notFoundException(USER_ERROR_MESSAGE, id));
         userDao.findUserById(friendId)
-                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", friendId));
+                .orElseThrow(notFoundException(USER_ERROR_MESSAGE, friendId));
 
         relationDao.deleteRelation(id, friendId);
 
@@ -103,17 +104,17 @@ public class UserService {
     //
     public Set<User> getCommonFriends(Long id, Long otherId) {
         userDao.findUserById(id)
-                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", id));
+                .orElseThrow(notFoundException(USER_ERROR_MESSAGE, id));
 
         userDao.findUserById(otherId)
-                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", otherId));
+                .orElseThrow(notFoundException(USER_ERROR_MESSAGE, otherId));
 
         List<Long> firstUserIds = getFriendsIds(id);
         List<Long> secondUserIds = getFriendsIds(otherId);
 
         return findIdsIntersection(new HashSet<>(firstUserIds), new HashSet<>(secondUserIds)).stream()
                 .map(u -> userDao.findUserById(u)
-                        .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", u)))
+                        .orElseThrow(notFoundException(USER_ERROR_MESSAGE, u)))
                 .collect(Collectors.toSet());
     }
 
