@@ -3,14 +3,23 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.dal.*;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
+import ru.yandex.practicum.filmorate.dto.GenreDto;
+import ru.yandex.practicum.filmorate.dto.MpaDto;
+import ru.yandex.practicum.filmorate.entity.Film;
+import ru.yandex.practicum.filmorate.entity.Genre;
+import ru.yandex.practicum.filmorate.entity.Mpa;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.mapper.GenreMapper;
+import ru.yandex.practicum.filmorate.mapper.MpaMapper;
 
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.exception.NotFoundException.notFoundException;
 
@@ -19,57 +28,67 @@ import static ru.yandex.practicum.filmorate.exception.NotFoundException.notFound
 @RequiredArgsConstructor
 public class FilmService {
 
-    private final FilmStorage filmStorage;
+    private final FilmDao filmDao;
 
-    private final UserStorage userStorage;
+    private final LikesDao likesDao;
+    private final GenreDao genreDao;
+    private final UserDao userDao;
+    private final MpaDao mpaDao;
 
     public Collection<Film> findAll() {
-        return filmStorage.getFilms();
+        return filmDao.findAll();
     }
 
-    public Film createFilm(Film film) {
-        film.setLikedIds(new HashSet<>());
+    public FilmDto createFilm(FilmDto filmDto) {
+        MpaDto mpaDto = filmDto.getMpa();
+        List<GenreDto> genres = filmDto.getGenres();
+        mpaDao.findById(mpaDto.getId()).orElseThrow(notFoundException("MPA с идентификатором {0} - не существует", mpaDto.getId()));
 
-        return filmStorage.createFilm(film);
+        Film film = filmDao.createFilm(FilmMapper.mapToFilm(filmDto));
+        if (genres != null && !genres.isEmpty()) {
+            getExistedGenresIds(genres, film.getId());
+        }
+        filmDto.setId(film.getId());
+        return filmDto;
     }
 
-    public Film updateFilm(Film film) {
+    private void getExistedGenresIds(List<GenreDto> genres, Long id) {
+        List<Long> genresRealIds = genreDao.findAll().stream().map(Genre::getId).toList();
+        List<Long> genresInputIds = genres.stream().map(GenreDto::getId).distinct().toList();
+        Set<Long> interIds = genresInputIds.stream().filter(genresRealIds::contains).collect(Collectors.toSet());
+        if (interIds.size() != genresInputIds.size()) {
+            throw new NotFoundException("В списке жанров присутствуют некорректные жанры.");
+        }
+        genreDao.createGenreBatch(id, genres);
+    }
 
-        filmStorage.findFilmById(film.getId())
+    public Film updateFilm(FilmDto filmDto) {
+        Film film = FilmMapper.mapToFilm(filmDto);
+        filmDao.findFilmById(film.getId())
                 .orElseThrow(notFoundException("Фильм с идентификатором: {0} - не существует.", film.getId()));
 
-        if (film.getLikedIds() == null) {
-            film.setLikedIds(new HashSet<>());
-        }
-
-        return filmStorage.updateFilm(film);
+        return filmDao.updateFilm(film);
     }
 
     public Map<String, String> deleteFilmById(Long id) {
-        return filmStorage.deleteFilmById(id);
+        return filmDao.deleteFilmById(id);
     }
 
     public Film createLike(Long id, Long userId) {
-
-        Film film = filmStorage.findFilmById(id)
+        Film film = filmDao.findFilmById(id)
                 .orElseThrow(notFoundException("Фильм с идентификатором: {0} - не существует.", id));
-
-        userStorage.findUserById(userId)
-                .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", userId));
-
-        film.getLikedIds().add(userId);
-
+        userDao.findUserById(userId).orElseThrow(notFoundException("Фильм с идентификатором: {0} - не существует.", userId));
+        likesDao.addLike(id, userId);
         return film;
     }
 
     public Map<String, String> deleteLike(Long id, Long userId) {
-        Film film = filmStorage.findFilmById(id)
+        filmDao.findFilmById(id).stream().findFirst()
                 .orElseThrow(notFoundException("Фильм с идентификатором: {0} - не существует.", id));
-
-        userStorage.findUserById(userId)
+        userDao.findUserById(userId)
                 .orElseThrow(notFoundException("Пользователь с идентификатором: {0} - не существует.", userId));
 
-        film.getLikedIds().remove(userId);
+        likesDao.deleteLike(id, userId);
 
         return Map.of("description",
                 String.format("Фильм с идентификатором: " +
@@ -77,9 +96,32 @@ public class FilmService {
     }
 
     public Collection<Film> findPopularFilms(Long count) {
-        return filmStorage.getFilms().stream()
-                .sorted(Comparator.comparing(u -> u.getLikedIds().size()))
-                .skip(Math.max(0, filmStorage.getFilms().size() - count))
-                .toList().reversed();
+        return filmDao.findPopularFilms(count);
+    }
+
+    public List<GenreDto> findGenres() {
+        return genreDao.findAll().stream().map(GenreMapper::mapToDto).collect(Collectors.toList());
+    }
+
+    public GenreDto findGenreById(Long id) {
+        Genre genre = genreDao.findById(id).orElseThrow(notFoundException("Жанр с идентификатором {0} - не существует", id));
+        return GenreMapper.mapToDto(genre);
+    }
+
+    public List<MpaDto> findAllMpa() {
+        return mpaDao.findAll().stream().map(MpaMapper::mapToDto).collect(Collectors.toList());
+    }
+
+    public MpaDto findMpaById(Long id) {
+        Mpa mpa = mpaDao.findById(id).orElseThrow(notFoundException("MPA с идентификатором {0} - не существует", id));
+        return MpaMapper.mapToDto(mpa);
+    }
+
+    public FilmDto getFilmFull(Long id) {
+        Film film = filmDao.findFilmById(id).orElseThrow(notFoundException("Фильм с идентификатором {0} - не существует", id));
+        MpaDto mpaDto = MpaMapper.mapToDto(mpaDao.findById(film.getMpa()).orElseThrow(
+                notFoundException("MPA с идентификатором {0} - не существует", id)));
+        List<GenreDto> genreDto = genreDao.findGenresByFilmId(id).stream().map(GenreMapper::mapToDto).toList();
+        return FilmMapper.mapToDto(film, mpaDto, genreDto);
     }
 }

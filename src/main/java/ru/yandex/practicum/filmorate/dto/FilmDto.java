@@ -1,22 +1,21 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import ru.yandex.practicum.filmorate.annotation.FilmCreationConstraint;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Builder
-public class Film {
+public class FilmDto {
+
     Long id;
 
     @NotBlank
@@ -34,5 +33,7 @@ public class Film {
     @Min(1)
     Long duration;
 
-    Set<Long> likedIds;
+    MpaDto mpa;
+
+    List<GenreDto> genres;
 }

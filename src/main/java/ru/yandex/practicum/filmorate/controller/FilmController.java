@@ -4,7 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
+import ru.yandex.practicum.filmorate.entity.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
@@ -27,15 +28,15 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film create(@Valid @RequestBody Film film) {
+    public FilmDto create(@Valid @RequestBody FilmDto filmDto) {
         log.info("Выполняется добавление нового фильма.");
-        return filmService.createFilm(film);
+        return filmService.createFilm(filmDto);
     }
 
     @PutMapping
-    public Film update(@RequestBody Film film) {
+    public Film update(@RequestBody FilmDto filmDto) {
         log.info("Выполняется обновление фильма.");
-        return filmService.updateFilm(film);
+        return filmService.updateFilm(filmDto);
     }
 
     @DeleteMapping
@@ -45,15 +46,13 @@ public class FilmController {
     }
 
     @PutMapping(likeURI)
-    public Film createLike(@PathVariable(name = "id") Long id,
-                           @PathVariable(name = "user-id") Long userId) {
+    public Film createLike(@PathVariable(name = "id") Long id, @PathVariable(name = "user-id") Long userId) {
         log.info("Выполняется добавление лайка пользователем {} к фильму {}.", userId, id);
         return filmService.createLike(id, userId);
     }
 
     @DeleteMapping(likeURI)
-    public Map<String, String> deleteLike(@PathVariable(name = "id") Long id,
-                                          @PathVariable(name = "user-id") Long userId) {
+    public Map<String, String> deleteLike(@PathVariable(name = "id") Long id, @PathVariable(name = "user-id") Long userId) {
         return filmService.deleteLike(id, userId);
     }
 
@@ -62,4 +61,8 @@ public class FilmController {
         return filmService.findPopularFilms(count);
     }
 
+    @GetMapping("/{id}")
+    public FilmDto getFilm(@PathVariable Long id) {
+        return filmService.getFilmFull(id);
+    }
 }

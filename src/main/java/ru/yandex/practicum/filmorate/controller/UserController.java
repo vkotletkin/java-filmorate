@@ -1,10 +1,11 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.entity.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
@@ -48,7 +49,7 @@ public class UserController {
 
     @PutMapping(friendURI)
     public User createFriend(@PathVariable(name = "id") Long id,
-                             @PathVariable(name = "friend-id") Long friendId) {
+                             @PathVariable(name = "friend-id") @NotNull Long friendId) {
         return userService.createFriend(id, friendId);
     }
 
@@ -69,3 +70,4 @@ public class UserController {
         return userService.getCommonFriends(id, otherId);
     }
 }
+

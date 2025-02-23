@@ -1,13 +1,13 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.dal;
 
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.entity.User;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
-public interface UserStorage {
-    Collection<User> getUsers();
+public interface UserDao {
+    Collection<User> findAll();
 
     User createUser(User user);
 
@@ -16,5 +16,4 @@ public interface UserStorage {
     Map<String, String> deleteUserById(Long id);
 
     Optional<User> findUserById(Long id);
-
 }
